@@ -22,9 +22,8 @@ namespace {
         static constexpr char const* SimpleController = "/interaction_profiles/khr/simple_controller";
         static constexpr char const* MotionController = "/interaction_profiles/microsoft/motion_controller";
         static constexpr char const* TouchController = "/interaction_profiles/oculus/touch_controller";
-        static constexpr char const* HPMixedRealityController = "/interaction_profiles/hp/mixed_reality_controller";
-        static constexpr char const* HandInteraction = "/interaction_profiles/microsoft/hand_interaction";
-        static constexpr char const* SamsungController = "/interaction_profiles/samsung/odyssey_controller";
+        static constexpr char const* ViveController = "/interaction_profiles/htc/vive_controller";
+        static constexpr char const* IndexController = "/interaction_profiles/valve/index_controller";
     };
 
     constexpr char const* aimPoseActionName[xr::Side::Count] = {"left_aim", "right_aim"};
@@ -182,104 +181,174 @@ namespace {
                           {InteractionProfiles::SimpleController, "select/click", nullptr},
                       });
 
-            addAction("trigger_select_value",
+            addAction("trigger_value",
                       XR_ACTION_TYPE_FLOAT_INPUT,
                       {
-                          {InteractionProfiles::HPMixedRealityController, "trigger/value", nullptr},
                           {InteractionProfiles::MotionController, "trigger/value", nullptr},
-                          {InteractionProfiles::SamsungController, "trigger/value", nullptr},
-                          {InteractionProfiles::HandInteraction, "select/value", nullptr},
                           {InteractionProfiles::TouchController, "trigger/value", nullptr},
+                          {InteractionProfiles::ViveController, "trigger/value", nullptr},
+                          {InteractionProfiles::IndexController, "trigger/value", nullptr},
                       });
-            addAction("squeeze",
+            addAction("trigger_click",
+                      XR_ACTION_TYPE_BOOLEAN_INPUT,
+                      {
+                          {InteractionProfiles::MotionController, "trigger/click", nullptr},
+                          {InteractionProfiles::TouchController, "trigger/click", nullptr},
+                          {InteractionProfiles::ViveController, "trigger/click", nullptr},
+                          {InteractionProfiles::IndexController, "trigger/click", nullptr},
+                      });
+            addAction("trigger_touch",
+                      XR_ACTION_TYPE_BOOLEAN_INPUT,
+                      {
+                          {InteractionProfiles::TouchController, "trigger/touch", nullptr},
+                          {InteractionProfiles::IndexController, "trigger/touch", nullptr},
+                      });
+            addAction("squeeze_value",
                       XR_ACTION_TYPE_FLOAT_INPUT,
                       {
-                          {InteractionProfiles::HPMixedRealityController, "squeeze/value", nullptr},
-                          {InteractionProfiles::MotionController, "squeeze/click", nullptr},
-                          {InteractionProfiles::SamsungController, "squeeze/click", nullptr},
-                          {InteractionProfiles::HandInteraction, "squeeze/value", nullptr},
                           {InteractionProfiles::TouchController, "squeeze/value", nullptr},
+                          {InteractionProfiles::IndexController, "squeeze/value", nullptr},
+                      });
+            addAction("squeeze_click",
+                      XR_ACTION_TYPE_BOOLEAN_INPUT,
+                      {
+                          {InteractionProfiles::MotionController, "squeeze/click", nullptr},
+                          {InteractionProfiles::TouchController, "squeeze/click", nullptr},
+                          {InteractionProfiles::ViveController, "squeeze/click", nullptr},
+                          {InteractionProfiles::IndexController, "squeeze/click", nullptr},
+                      });
+            addAction("squeeze_force",
+                      XR_ACTION_TYPE_FLOAT_INPUT,
+                      {
+                          {InteractionProfiles::IndexController, "squeeze/force", nullptr},
                       });
             addAction("thumbstick_x",
                       XR_ACTION_TYPE_FLOAT_INPUT,
                       {
-                          {InteractionProfiles::HPMixedRealityController, "thumbstick/x", nullptr},
                           {InteractionProfiles::MotionController, "thumbstick/x", nullptr},
-                          {InteractionProfiles::SamsungController, "thumbstick/x", nullptr},
                           {InteractionProfiles::TouchController, "thumbstick/x", nullptr},
+                          {InteractionProfiles::IndexController, "thumbstick/x", nullptr},
                       });
             addAction("thumbstick_y",
                       XR_ACTION_TYPE_FLOAT_INPUT,
                       {
-                          {InteractionProfiles::HPMixedRealityController, "thumbstick/y", nullptr},
                           {InteractionProfiles::MotionController, "thumbstick/y", nullptr},
-                          {InteractionProfiles::SamsungController, "thumbstick/y", nullptr},
                           {InteractionProfiles::TouchController, "thumbstick/y", nullptr},
+                          {InteractionProfiles::IndexController, "thumbstick/y", nullptr},
                       });
             addAction("thumbstick_click",
                       XR_ACTION_TYPE_FLOAT_INPUT,
                       {
-                          {InteractionProfiles::HPMixedRealityController, "thumbstick/click", nullptr},
                           {InteractionProfiles::MotionController, "thumbstick/click", nullptr},
-                          {InteractionProfiles::SamsungController, "thumbstick/click", nullptr},
                           {InteractionProfiles::TouchController, "thumbstick/click", nullptr},
+                          {InteractionProfiles::IndexController, "thumbstick/click", nullptr},
+                      });
+            addAction("thumbstick_touch",
+                      XR_ACTION_TYPE_BOOLEAN_INPUT,
+                      {
+                          {InteractionProfiles::TouchController, "thumbstick/touch", nullptr},
+                          {InteractionProfiles::IndexController, "thumbstick/touch", nullptr},
+                      });
+            addAction("thumbrest_touch",
+                      XR_ACTION_TYPE_BOOLEAN_INPUT,
+                      {
+                          {InteractionProfiles::TouchController, "thumbrest/touch", nullptr},
                       });
             addAction("trackpad_x",
                       XR_ACTION_TYPE_FLOAT_INPUT,
                       {
                           {InteractionProfiles::MotionController, "trackpad/x", nullptr},
-                          {InteractionProfiles::SamsungController, "trackpad/x", nullptr},
+                          {InteractionProfiles::ViveController, "trackpad/x", nullptr},
+                          {InteractionProfiles::IndexController, "trackpad/x", nullptr},
                       });
             addAction("trackpad_y",
                       XR_ACTION_TYPE_FLOAT_INPUT,
                       {
                           {InteractionProfiles::MotionController, "trackpad/y", nullptr},
-                          {InteractionProfiles::SamsungController, "trackpad/y", nullptr},
+                          {InteractionProfiles::ViveController, "trackpad/y", nullptr},
+                          {InteractionProfiles::IndexController, "trackpad/y", nullptr},
                       });
             addAction("trackpad_touch",
                       XR_ACTION_TYPE_FLOAT_INPUT,
                       {
                           {InteractionProfiles::MotionController, "trackpad/touch", nullptr},
-                          {InteractionProfiles::SamsungController, "trackpad/touch", nullptr},
+                          {InteractionProfiles::ViveController, "trackpad/touch", nullptr},
+                          {InteractionProfiles::IndexController, "trackpad/touch", nullptr},
+                      });
+            addAction("trackpad_force",
+                      XR_ACTION_TYPE_FLOAT_INPUT,
+                      {
+                          {InteractionProfiles::IndexController, "trackpad/force", nullptr},
                       });
             addAction("trackpad_click",
                       XR_ACTION_TYPE_FLOAT_INPUT,
                       {
                           {InteractionProfiles::MotionController, "trackpad/click", nullptr},
-                          {InteractionProfiles::SamsungController, "trackpad/click", nullptr},
+                          {InteractionProfiles::ViveController, "trackpad/click", nullptr},
                       });
             addAction("a",
                       XR_ACTION_TYPE_BOOLEAN_INPUT,
                       {
-                          {InteractionProfiles::HPMixedRealityController, "a/click", UserHandPath[xr::Side::Right]},
                           {InteractionProfiles::TouchController, "a/click", UserHandPath[xr::Side::Right]},
+                          {InteractionProfiles::IndexController, "a/click", nullptr},
+                      });
+            addAction("a_touch",
+                      XR_ACTION_TYPE_BOOLEAN_INPUT,
+                      {
+                          {InteractionProfiles::TouchController, "a/touch", UserHandPath[xr::Side::Right]},
+                          {InteractionProfiles::IndexController, "a/touch", nullptr},
                       });
             addAction("b",
                       XR_ACTION_TYPE_BOOLEAN_INPUT,
                       {
-                          {InteractionProfiles::HPMixedRealityController, "b/click", UserHandPath[xr::Side::Right]},
                           {InteractionProfiles::TouchController, "b/click", UserHandPath[xr::Side::Right]},
+                          {InteractionProfiles::IndexController, "b/click", nullptr},
+                      });
+            addAction("b_touch",
+                      XR_ACTION_TYPE_BOOLEAN_INPUT,
+                      {
+                          {InteractionProfiles::TouchController, "b/touch", UserHandPath[xr::Side::Right]},
+                          {InteractionProfiles::IndexController, "b/touch", nullptr},
                       });
             addAction("x",
                       XR_ACTION_TYPE_BOOLEAN_INPUT,
                       {
-                          {InteractionProfiles::HPMixedRealityController, "x/click", UserHandPath[xr::Side::Left]},
                           {InteractionProfiles::TouchController, "x/click", UserHandPath[xr::Side::Left]},
+                      });
+            addAction("x_touch",
+                      XR_ACTION_TYPE_BOOLEAN_INPUT,
+                      {
+                          {InteractionProfiles::TouchController, "x/touch", UserHandPath[xr::Side::Left]},
                       });
             addAction("y",
                       XR_ACTION_TYPE_BOOLEAN_INPUT,
                       {
-                          {InteractionProfiles::HPMixedRealityController, "y/click", UserHandPath[xr::Side::Left]},
                           {InteractionProfiles::TouchController, "y/click", UserHandPath[xr::Side::Left]},
+                      });
+            addAction("y_touch",
+                      XR_ACTION_TYPE_BOOLEAN_INPUT,
+                      {
+                          {InteractionProfiles::TouchController, "y/touch", UserHandPath[xr::Side::Left]},
                       });
             addAction("menu",
                       XR_ACTION_TYPE_BOOLEAN_INPUT,
                       {
-                          {InteractionProfiles::HPMixedRealityController, "menu/click", nullptr},
-                          {InteractionProfiles::MotionController, "menu/click", nullptr},
-                          {InteractionProfiles::SamsungController, "menu/click", nullptr},
                           {InteractionProfiles::SimpleController, "menu/click", nullptr},
+                          {InteractionProfiles::MotionController, "menu/click", nullptr},
                           {InteractionProfiles::TouchController, "menu/click", UserHandPath[xr::Side::Left]},
+                          {InteractionProfiles::ViveController, "menu/click", nullptr},
+                      });
+            addAction("system",
+                      XR_ACTION_TYPE_BOOLEAN_INPUT,
+                      {
+                          {InteractionProfiles::TouchController, "system/click", UserHandPath[xr::Side::Right]},
+                          {InteractionProfiles::ViveController, "system/click", nullptr},
+                          {InteractionProfiles::IndexController, "system/click", nullptr},
+                      });
+            addAction("system_touch",
+                      XR_ACTION_TYPE_BOOLEAN_INPUT,
+                      {
+                          {InteractionProfiles::IndexController, "system/touch", nullptr},
                       });
 
             for (auto side : {xr::Side::Left, xr::Side::Right}) {
@@ -287,22 +356,20 @@ namespace {
                           XR_ACTION_TYPE_POSE_INPUT,
                           {
                               {InteractionProfiles::SimpleController, "aim/pose", UserHandPath[side]},
-                              {InteractionProfiles::HPMixedRealityController, "aim/pose", UserHandPath[side]},
                               {InteractionProfiles::MotionController, "aim/pose", UserHandPath[side]},
-                              {InteractionProfiles::SamsungController, "aim/pose", UserHandPath[side]},
-                              {InteractionProfiles::HandInteraction, "aim/pose", UserHandPath[side]},
                               {InteractionProfiles::TouchController, "aim/pose", UserHandPath[side]},
+                              {InteractionProfiles::ViveController, "aim/pose", UserHandPath[side]},
+                              {InteractionProfiles::IndexController, "aim/pose", UserHandPath[side]},
                           });
 
                 addAction(gripPoseActionName[side],
                           XR_ACTION_TYPE_POSE_INPUT,
                           {
                               {InteractionProfiles::SimpleController, "grip/pose", UserHandPath[side]},
-                              {InteractionProfiles::HPMixedRealityController, "grip/pose", UserHandPath[side]},
                               {InteractionProfiles::MotionController, "grip/pose", UserHandPath[side]},
-                              {InteractionProfiles::SamsungController, "grip/pose", UserHandPath[side]},
-                              {InteractionProfiles::HandInteraction, "grip/pose", UserHandPath[side]},
                               {InteractionProfiles::TouchController, "grip/pose", UserHandPath[side]},
+                              {InteractionProfiles::ViveController, "grip/pose", UserHandPath[side]},
+                              {InteractionProfiles::IndexController, "grip/pose", UserHandPath[side]},
                           });
             }
 
@@ -351,21 +418,10 @@ namespace {
                                                             suggestedBindings[InteractionProfiles::MotionController]);
             actionContext.SuggestInteractionProfileBindings(InteractionProfiles::TouchController,
                                                             suggestedBindings[InteractionProfiles::TouchController]);
-
-            if (extensions.SupportsHPMixedRealityController) {
-                actionContext.SuggestInteractionProfileBindings(InteractionProfiles::HPMixedRealityController,
-                                                                suggestedBindings[InteractionProfiles::HPMixedRealityController]);
-            }
-
-            if (extensions.SupportsHandInteraction) {
-                actionContext.SuggestInteractionProfileBindings(InteractionProfiles::HandInteraction,
-                                                                suggestedBindings[InteractionProfiles::HandInteraction]);
-            }
-
-            if (extensions.SupportsSamsungOdysseyController) {
-                actionContext.SuggestInteractionProfileBindings(InteractionProfiles::SamsungController,
-                                                                suggestedBindings[InteractionProfiles::SamsungController]);
-            }
+            actionContext.SuggestInteractionProfileBindings(InteractionProfiles::ViveController,
+                                                            suggestedBindings[InteractionProfiles::ViveController]);
+            actionContext.SuggestInteractionProfileBindings(InteractionProfiles::IndexController,
+                                                            suggestedBindings[InteractionProfiles::IndexController]);
         }
 
         // Update the visualization of controller components when interaction profile is changed.
@@ -480,7 +536,7 @@ namespace {
         }
 
         static std::shared_ptr<engine::Object> CreateTextObject(engine::Context& context, uint32_t side, std::string_view text) {
-            constexpr uint32_t width = 480, height = 960;
+            constexpr uint32_t width = 480, height = 2000;
             engine::TextTextureInfo textInfo{width, height}; // pixels
             textInfo.FontSize = 18;
             textInfo.Foreground = Pbr::RGBA::White;

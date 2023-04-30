@@ -8,7 +8,6 @@
 #include "Resource.h"
 
 std::unique_ptr<engine::Scene> TryCreateTitleScene(engine::Context& context);
-std::unique_ptr<engine::Scene> TryCreateControllerModelScene(engine::Context& context);
 std::unique_ptr<engine::Scene> TryCreateControllerActionsScene(engine::Context& context);
 std::unique_ptr<engine::Scene> TryCreateHandTrackingScene(engine::Context& context);
 std::unique_ptr<engine::Scene> TryCreateTrackingStateScene(engine::Context& context);
@@ -37,25 +36,19 @@ void EnterVR() {
         auto on_exit = MakeScopeGuard([] { ::CoUninitialize(); });
 
         engine::XrAppConfiguration appConfig({"SampleSceneWin32", 1});
-        appConfig.RequestedExtensions.push_back(XR_MSFT_CONTROLLER_MODEL_EXTENSION_NAME);
         appConfig.RequestedExtensions.push_back(XR_EXT_HAND_TRACKING_EXTENSION_NAME);
         appConfig.RequestedExtensions.push_back(XR_EXT_HAND_JOINTS_MOTION_RANGE_EXTENSION_NAME);
         appConfig.RequestedExtensions.push_back(XR_MSFT_HAND_TRACKING_MESH_EXTENSION_NAME);
-        appConfig.RequestedExtensions.push_back(XR_MSFT_HAND_INTERACTION_EXTENSION_NAME);
-        appConfig.RequestedExtensions.push_back(XR_EXT_HP_MIXED_REALITY_CONTROLLER_EXTENSION_NAME);
-        appConfig.RequestedExtensions.push_back(XR_EXT_SAMSUNG_ODYSSEY_CONTROLLER_EXTENSION_NAME);
 
         // NOTE: Uncomment a filter below to test specific action binding of given profile.
-        // appConfig.InteractionProfilesFilter.push_back("/interaction_profiles/microsoft/hand_interaction");
         // appConfig.InteractionProfilesFilter.push_back("/interaction_profiles/microsoft/motion_controller");
         // appConfig.InteractionProfilesFilter.push_back("/interaction_profiles/oculus/touch_controller");
-        // appConfig.InteractionProfilesFilter.push_back("/interaction_profiles/hp/mixed_reality_controller");
-        // appConfig.InteractionProfilesFilter.push_back("/interaction_profiles/samsung/odyssey_controller");
+        // appConfig.InteractionProfilesFilter.push_back("/interaction_profiles/htc/vive_controller");
+        // appConfig.InteractionProfilesFilter.push_back("/interaction_profiles/valve/index_controller");
         // appConfig.InteractionProfilesFilter.push_back("/interaction_profiles/khr/simple_controller");
 
         app = engine::CreateXrApp(appConfig);
         app->AddScene(TryCreateTitleScene(app->Context()));
-        app->AddScene(TryCreateControllerModelScene(app->Context()));
         app->AddScene(TryCreateControllerActionsScene(app->Context()));
         app->AddScene(TryCreateHandTrackingScene(app->Context()));
         app->AddScene(TryCreateTrackingStateScene(app->Context()));

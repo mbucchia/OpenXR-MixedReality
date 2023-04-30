@@ -4,7 +4,6 @@
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Scene_ControllerActions.cpp" />
-    <ClCompile Include="Scene_ControllerModel.cpp" />
     <ClCompile Include="..\SampleSceneUwp\Scene_HandTracking.cpp" />
     <ClCompile Include="Scene_TrackingState.cpp" />
   </ItemGroup>
