@@ -39,10 +39,11 @@ void EnterVR() {
         appConfig.RequestedExtensions.push_back(XR_EXT_HAND_TRACKING_EXTENSION_NAME);
         appConfig.RequestedExtensions.push_back(XR_EXT_HAND_JOINTS_MOTION_RANGE_EXTENSION_NAME);
         appConfig.RequestedExtensions.push_back(XR_MSFT_HAND_TRACKING_MESH_EXTENSION_NAME);
+        appConfig.RequestedExtensions.push_back("XR_EXT_palm_pose");
 
         // NOTE: Uncomment a filter below to test specific action binding of given profile.
         // appConfig.InteractionProfilesFilter.push_back("/interaction_profiles/microsoft/motion_controller");
-        // appConfig.InteractionProfilesFilter.push_back("/interaction_profiles/oculus/touch_controller");
+        appConfig.InteractionProfilesFilter.push_back("/interaction_profiles/oculus/touch_controller");
         // appConfig.InteractionProfilesFilter.push_back("/interaction_profiles/htc/vive_controller");
         // appConfig.InteractionProfilesFilter.push_back("/interaction_profiles/valve/index_controller");
         // appConfig.InteractionProfilesFilter.push_back("/interaction_profiles/khr/simple_controller");

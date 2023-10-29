@@ -49,7 +49,8 @@ namespace {
             CHECK(m_instance.Get() == XR_NULL_HANDLE);
 
             // Build out the extensions to enable. Some extensions are required and some are optional.
-            const std::vector<const char*> enabledExtensions = SelectExtensions();
+            std::vector<const char*> enabledExtensions = SelectExtensions();
+            enabledExtensions.push_back(XR_MND_HEADLESS_EXTENSION_NAME);
 
             // Create the instance with enabled extensions.
             XrInstanceCreateInfo createInfo{XR_TYPE_INSTANCE_CREATE_INFO};
@@ -286,7 +287,7 @@ namespace {
             graphicsBinding.device = device;
 
             XrSessionCreateInfo createInfo{XR_TYPE_SESSION_CREATE_INFO};
-            createInfo.next = &graphicsBinding;
+            //createInfo.next = &graphicsBinding;
             createInfo.systemId = m_systemId;
             CHECK_XRCMD(xrCreateSession(m_instance.Get(), &createInfo, m_session.Put(xrDestroySession)));
 
@@ -310,7 +311,7 @@ namespace {
                     m_appSpaceType = XR_REFERENCE_SPACE_TYPE_UNBOUNDED_MSFT;
                 } else {
                     // If running on a platform that does not support world-scale experiences, fall back to local space.
-                    m_appSpaceType = XR_REFERENCE_SPACE_TYPE_LOCAL;
+                    m_appSpaceType = XR_REFERENCE_SPACE_TYPE_STAGE;
                 }
 
                 XrReferenceSpaceCreateInfo spaceCreateInfo{XR_TYPE_REFERENCE_SPACE_CREATE_INFO};
@@ -370,8 +371,9 @@ namespace {
             CHECK_XRCMD(xrGetSystemProperties(m_instance.Get(), m_systemId, &systemProperties));
 
             // Select color and depth swapchain pixel formats.
+            #if 0
             const auto [colorSwapchainFormat, depthSwapchainFormat] = SelectSwapchainPixelFormats();
-
+            #endif
             // Query and cache view configuration views.
             uint32_t viewCount;
             CHECK_XRCMD(xrEnumerateViewConfigurationViews(m_instance.Get(), m_systemId, m_primaryViewConfigType, 0, &viewCount, nullptr));
@@ -398,6 +400,7 @@ namespace {
             // Create swapchains with texture array for color and depth images.
             // The texture array has the size of viewCount, and they are rendered in a single pass using VPRT.
             const uint32_t textureArraySize = viewCount;
+            #if 0
             m_renderResources->ColorSwapchain =
                 CreateSwapchainD3D11(m_session.Get(),
                                      colorSwapchainFormat,
@@ -417,7 +420,7 @@ namespace {
                                      swapchainSampleCount,
                                      0 /*createFlags*/,
                                      XR_SWAPCHAIN_USAGE_SAMPLED_BIT | XR_SWAPCHAIN_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT);
-
+            #endif
             // Preallocate view buffers for xrLocateViews later inside frame loop.
             m_renderResources->Views.resize(viewCount, {XR_TYPE_VIEW});
         }
@@ -646,7 +649,8 @@ namespace {
             layer.layerFlags = XR_COMPOSITION_LAYER_BLEND_TEXTURE_SOURCE_ALPHA_BIT;
 
             // Only render when session is visible, otherwise submit zero layers.
-            if (frameState.shouldRender) {
+            //if (frameState.shouldRender)
+            {
                 // First update the viewState and views using latest predicted display time.
                 {
                     XrViewLocateInfo viewLocateInfo{XR_TYPE_VIEW_LOCATE_INFO};
@@ -667,14 +671,29 @@ namespace {
 
                     CHECK(viewCountOutput == viewCapacityInput);
                     CHECK(viewCountOutput == m_renderResources->ConfigViews.size());
-                    CHECK(viewCountOutput == m_renderResources->ColorSwapchain.ArraySize);
-                    CHECK(viewCountOutput == m_renderResources->DepthSwapchain.ArraySize);
+//                    CHECK(viewCountOutput == m_renderResources->ColorSwapchain.ArraySize);
+//                    CHECK(viewCountOutput == m_renderResources->DepthSwapchain.ArraySize);
+                }
+
+                for (uint32_t side = 0; side < 2; side++) {
+                XrSpaceLocation cubeSpaceInAppSpace{XR_TYPE_SPACE_LOCATION};
+                CHECK_XRCMD(xrLocateSpace(m_cubesInHand[side].Space.Get(), m_appSpace.Get(), frameState.predictedDisplayTime, &cubeSpaceInAppSpace));
+                const auto& pose = cubeSpaceInAppSpace.pose;
+                DEBUG_PRINT("grip[%d] = %.9f, %.9f, %.9f, %.9f / %.9f, %.9f, %.9f\n",
+                            side,
+                            pose.orientation.x,
+                            pose.orientation.y,
+                            pose.orientation.z,
+                            pose.orientation.w,
+                            pose.position.x,
+                            pose.position.y,
+                            pose.position.z);
                 }
 
                 // Then, render projection layer into each view.
-                if (RenderLayer(frameState.predictedDisplayTime, layer)) {
-                    layers.push_back(reinterpret_cast<XrCompositionLayerBaseHeader*>(&layer));
-                }
+                //if (RenderLayer(frameState.predictedDisplayTime, layer)) {
+                //    layers.push_back(reinterpret_cast<XrCompositionLayerBaseHeader*>(&layer));
+               //}
             }
 
             // Submit the composition layers for the predicted display time.
@@ -682,7 +701,7 @@ namespace {
             frameEndInfo.displayTime = frameState.predictedDisplayTime;
             frameEndInfo.environmentBlendMode = m_environmentBlendMode;
             frameEndInfo.layerCount = (uint32_t)layers.size();
-            frameEndInfo.layers = layers.data();
+            frameEndInfo.layers = 0;//layers.data();
             CHECK_XRCMD(xrEndFrame(m_session.Get(), &frameEndInfo));
         }
 

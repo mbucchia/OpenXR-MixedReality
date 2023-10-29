@@ -232,7 +232,7 @@ namespace {
 
         // Create main app space
         spaceCreateInfo.referenceSpaceType =
-            extensions.SupportsUnboundedSpace ? XR_REFERENCE_SPACE_TYPE_UNBOUNDED_MSFT : XR_REFERENCE_SPACE_TYPE_LOCAL;
+            extensions.SupportsUnboundedSpace ? XR_REFERENCE_SPACE_TYPE_UNBOUNDED_MSFT : XR_REFERENCE_SPACE_TYPE_STAGE;
         CHECK_XRCMD(xrCreateReferenceSpace(session.Handle, &spaceCreateInfo, m_appSpace.Put(xrDestroySpace)));
 
         Pbr::Resources pbrResources = sample::InitializePbrResources(device.get());

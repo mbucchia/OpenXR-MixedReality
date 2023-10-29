@@ -28,6 +28,7 @@ namespace {
 
     constexpr char const* aimPoseActionName[xr::Side::Count] = {"left_aim", "right_aim"};
     constexpr char const* gripPoseActionName[xr::Side::Count] = {"left_grip", "right_grip"};
+    constexpr char const* palmPoseActionName[xr::Side::Count] = {"left_palm", "right_palm"};
 
     //
     // This sample visualizes the current interaction profile and its controller components
@@ -70,6 +71,16 @@ namespace {
                     axis->SetParent(controllerData.gripRoot);
                 }
 
+                // Initialize objects attached to palm pose
+                {
+                    XrAction palmAction = FindAction(m_actions, palmPoseActionName[side]).action;
+                    xr::SpaceHandle palmSpace = CreateActionSpace(context.Session.Handle, palmAction);
+                    controllerData.palmRoot = AddObject(engine::CreateSpaceObject(std::move(palmSpace)));
+
+                    auto axis = AddObject(engine::CreateAxis(m_context.PbrResources, 0.05f, 0.001f));
+                    axis->SetParent(controllerData.palmRoot);
+                }
+
                 m_interactionProfilesDirty = true;
             }
         }
@@ -92,6 +103,40 @@ namespace {
                 for (auto& component : m_controllerData[side].components) {
                     UpdateComponentValueVisuals(m_context, xr::StringToPath(m_context.Instance.Handle, UserHandPath[side]), component);
                 }
+
+                XrPosef pose = m_controllerData[side].gripRoot->Pose();
+                auto str = fmt::format("grip[{}] = {:.9f}, {:.9f}, {:.9f}, {:.9f} / {:.9f}, {:.9f}, {:.9f}\n",
+                                       side,
+                                       pose.orientation.x,
+                                       pose.orientation.y,
+                                       pose.orientation.z,
+                                       pose.orientation.w,
+                                       pose.position.x,
+                                       pose.position.y,
+                                       pose.position.z);
+                OutputDebugStringA(str.c_str());
+                pose = m_controllerData[side].aimRoot->Pose();
+                str = fmt::format("aim[{}] = {:.9f}, {:.9f}, {:.9f}, {:.9f} / {:.9f}, {:.9f}, {:.9f}\n",
+                                  side,
+                                  pose.orientation.x,
+                                  pose.orientation.y,
+                                  pose.orientation.z,
+                                  pose.orientation.w,
+                                  pose.position.x,
+                                  pose.position.y,
+                                  pose.position.z);
+                OutputDebugStringA(str.c_str());
+                pose = m_controllerData[side].palmRoot->Pose();
+                str = fmt::format("palm[{}] = {:.9f}, {:.9f}, {:.9f}, {:.9f} / {:.9f}, {:.9f}, {:.9f}\n",
+                                  side,
+                                  pose.orientation.x,
+                                  pose.orientation.y,
+                                  pose.orientation.z,
+                                  pose.orientation.w,
+                                  pose.position.x,
+                                  pose.position.y,
+                                  pose.position.z);
+                OutputDebugStringA(str.c_str());
             }
         }
 
@@ -154,6 +199,7 @@ namespace {
 
             std::shared_ptr<engine::Object> gripRoot;
             std::shared_ptr<engine::Object> aimRoot;
+            std::shared_ptr<engine::Object> palmRoot;
         };
 
         const std::vector<ActionInfo> m_actions;
@@ -175,6 +221,7 @@ namespace {
                 actions.emplace_back(actionInfo);
             };
 
+#if 0
             addAction("select",
                       XR_ACTION_TYPE_BOOLEAN_INPUT,
                       {
@@ -350,7 +397,7 @@ namespace {
                       {
                           {InteractionProfiles::IndexController, "system/touch", nullptr},
                       });
-
+#endif
             for (auto side : {xr::Side::Left, xr::Side::Right}) {
                 addAction(aimPoseActionName[side],
                           XR_ACTION_TYPE_POSE_INPUT,
@@ -370,6 +417,11 @@ namespace {
                               {InteractionProfiles::TouchController, "grip/pose", UserHandPath[side]},
                               {InteractionProfiles::ViveController, "grip/pose", UserHandPath[side]},
                               {InteractionProfiles::IndexController, "grip/pose", UserHandPath[side]},
+                          });
+                addAction(palmPoseActionName[side],
+                          XR_ACTION_TYPE_POSE_INPUT,
+                          {
+                              {InteractionProfiles::TouchController, "palm_ext/pose", UserHandPath[side]},
                           });
             }
 

@@ -126,11 +126,14 @@ namespace xr {
             getLocalizedNameInfo.sourcePath = sourcesBuffer[i];
             getLocalizedNameInfo.whichComponents = flags;
 
-            CHECK_XRCMD(xrGetInputSourceLocalizedName(session, &getLocalizedNameInfo, 0, &nameCapacityOutput, nullptr));
+            nameCapacityOutput = 0;
+            xrGetInputSourceLocalizedName(session, &getLocalizedNameInfo, 0, &nameCapacityOutput, nullptr);
 
             nameBuffer.resize(nameCapacityOutput);
-            CHECK_XRCMD(
-                xrGetInputSourceLocalizedName(session, &getLocalizedNameInfo, nameCapacityOutput, &nameCapacityOutput, nameBuffer.data()));
+            if (nameCapacityOutput) {
+                CHECK_XRCMD(xrGetInputSourceLocalizedName(
+                    session, &getLocalizedNameInfo, nameCapacityOutput, &nameCapacityOutput, nameBuffer.data()));
+            }
 
             // Some names are duplicated due to binding to the same input component and the left and right controllers
             names.emplace(nameBuffer.data());
