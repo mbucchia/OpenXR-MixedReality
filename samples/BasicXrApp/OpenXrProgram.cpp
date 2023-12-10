@@ -739,12 +739,12 @@ namespace {
             if (IsSessionFocused()) {
                 auto convertToSeconds = [](XrDuration nanoSeconds) {
                     using namespace std::chrono;
-                    return duration_cast<duration<float>>(duration<XrDuration, std::nano>(nanoSeconds)).count();
+                    return duration_cast<duration<double>>(duration<XrDuration, std::nano>(nanoSeconds)).count();
                 };
 
                 const XrDuration duration = predictedDisplayTime - m_spinningCubeStartTime;
-                const float seconds = convertToSeconds(duration);
-                const float angle = DirectX::XM_PIDIV2 * seconds; // Rotate 90 degrees per second
+                const double seconds = convertToSeconds(duration);
+                const float angle = static_cast<float>(std::fmod(DirectX::XM_PIDIV2 * seconds, static_cast<double>(DirectX::XM_2PI))); // Rotate 90 degrees per second
                 const float radius = 0.5f;                        // Rotation radius in meters
 
                 // Let spinning cube rotate around the main cube's y axis.
