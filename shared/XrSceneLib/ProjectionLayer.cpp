@@ -18,7 +18,7 @@ using namespace DirectX;
 engine::ProjectionLayer::ProjectionLayer(const sample::SessionContext& sessionContext) {
     auto primaryViewConfiguraionType = sessionContext.PrimaryViewConfigurationType;
     auto colorSwapchainFormat = sessionContext.SupportedColorSwapchainFormats[0];
-    auto depthSwapchainFormat = sessionContext.SupportedDepthSwapchainFormats[0];
+    auto depthSwapchainFormat = sessionContext.SupportedDepthSwapchainFormats.size() ? sessionContext.SupportedDepthSwapchainFormats[0] : DXGI_FORMAT_D32_FLOAT;
 
     m_defaultViewConfigurationType = primaryViewConfiguraionType;
     m_viewConfigComponents[primaryViewConfiguraionType].PendingConfig.ColorSwapchainFormat = colorSwapchainFormat;
