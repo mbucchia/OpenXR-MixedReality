@@ -7,6 +7,7 @@
     <ClCompile Include="..\SampleSceneUwp\Scene_HandTracking.cpp" />
     <ClCompile Include="Scene_TrackingState.cpp" />
     <ClCompile Include="Scene_QuadLayers.cpp" />
+    <ClCompile Include="..\EyeGazeInteractionUwp\Scene_EyeGazeInteraction.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />

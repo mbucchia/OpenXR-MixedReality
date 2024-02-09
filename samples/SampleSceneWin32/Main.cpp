@@ -12,6 +12,7 @@ std::unique_ptr<engine::Scene> TryCreateControllerActionsScene(engine::Context& 
 std::unique_ptr<engine::Scene> TryCreateHandTrackingScene(engine::Context& context);
 std::unique_ptr<engine::Scene> TryCreateTrackingStateScene(engine::Context& context);
 std::unique_ptr<engine::Scene> TryCreateQuadLayerScene(engine::Context& context);
+std::unique_ptr<engine::Scene> TryCreateEyeGazeInteractionScene(engine::Context& context);
 
 // Global Variables:
 std::thread sceneThread;
@@ -39,6 +40,7 @@ void EnterVR() {
         engine::XrAppConfiguration appConfig({"SampleSceneWin32", 1});
         appConfig.RequestedExtensions.push_back(XR_EXT_HAND_TRACKING_EXTENSION_NAME);
         appConfig.RequestedExtensions.push_back(XR_EXT_PALM_POSE_EXTENSION_NAME);
+        appConfig.RequestedExtensions.push_back(XR_EXT_EYE_GAZE_INTERACTION_EXTENSION_NAME);
 
         // NOTE: Uncomment a filter below to test specific action binding of given profile.
         // appConfig.InteractionProfilesFilter.push_back("/interaction_profiles/microsoft/motion_controller");
@@ -53,6 +55,7 @@ void EnterVR() {
         app->AddScene(TryCreateHandTrackingScene(app->Context()));
         app->AddScene(TryCreateTrackingStateScene(app->Context()));
         app->AddScene(TryCreateQuadLayerScene(app->Context()));
+        app->AddScene(TryCreateEyeGazeInteractionScene(app->Context()));
         app->Run();
         app = nullptr;
     });
