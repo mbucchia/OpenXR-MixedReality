@@ -47,14 +47,6 @@ namespace xr {
     MAKE_TO_STRING_FUNCS(XrObjectType);
     MAKE_TO_STRING_FUNCS(XrActionType);
     MAKE_TO_STRING_FUNCS(XrHandEXT);
-    MAKE_TO_STRING_FUNCS(XrHandPoseTypeMSFT);
     MAKE_TO_CSTRING_FUNC(XrHandJointEXT);
     MAKE_TO_STRING_FUNCS(XrVisibilityMaskTypeKHR);
-    MAKE_TO_STRING_FUNCS(XrReprojectionModeMSFT);
-    MAKE_TO_STRING_FUNCS(XrSceneComponentTypeMSFT);
-    MAKE_TO_STRING_FUNCS(XrSceneComputeStateMSFT);
-    MAKE_TO_STRING_FUNCS(XrSceneComputeFeatureMSFT);
-    MAKE_TO_STRING_FUNCS(XrSpatialGraphNodeTypeMSFT);
-    MAKE_TO_STRING_FUNCS(XrSceneComputeConsistencyMSFT);
-    MAKE_TO_STRING_FUNCS(XrMeshComputeLodMSFT);
 } // namespace xr

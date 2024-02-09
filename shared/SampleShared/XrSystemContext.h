@@ -46,9 +46,6 @@ namespace sample {
         if (extensions.SupportsHandJointTracking) {
             xr::InsertExtensionStruct(system.Properties, system.HandTrackingProperties);
         }
-        if (extensions.SupportsHandMeshTracking) {
-            xr::InsertExtensionStruct(system.Properties, system.HandMeshProperties);
-        }
         if (extensions.SupportsEyeGazeInteraction) {
             xr::InsertExtensionStruct(system.Properties, system.EyeGazeInteractionProperties);
         }

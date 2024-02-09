@@ -93,10 +93,7 @@ namespace {
 
             // Additional optional extensions for enhanced functionality. Track whether enabled in m_optionalExtensions.
             m_optionalExtensions.DepthExtensionSupported = EnableExtensionIfSupported(XR_KHR_COMPOSITION_LAYER_DEPTH_EXTENSION_NAME);
-            m_optionalExtensions.UnboundedRefSpaceSupported = EnableExtensionIfSupported(XR_MSFT_UNBOUNDED_REFERENCE_SPACE_EXTENSION_NAME);
-            m_optionalExtensions.SpatialAnchorSupported = EnableExtensionIfSupported(XR_MSFT_SPATIAL_ANCHOR_EXTENSION_NAME);
             m_optionalExtensions.MsftHandInteractionSupported = EnableExtensionIfSupported(XR_MSFT_HAND_INTERACTION_EXTENSION_NAME);
-            m_optionalExtensions.HPMRControllerSupported = EnableExtensionIfSupported(XR_EXT_HP_MIXED_REALITY_CONTROLLER_EXTENSION_NAME);
 
             return enabledExtensions;
         }
@@ -177,25 +174,6 @@ namespace {
 
                 XrInteractionProfileSuggestedBinding suggestedBindings{XR_TYPE_INTERACTION_PROFILE_SUGGESTED_BINDING};
                 suggestedBindings.interactionProfile = GetXrPath("/interaction_profiles/khr/simple_controller");
-                suggestedBindings.suggestedBindings = bindings.data();
-                suggestedBindings.countSuggestedBindings = (uint32_t)bindings.size();
-                CHECK_XRCMD(xrSuggestInteractionProfileBindings(m_instance.Get(), &suggestedBindings));
-            }
-
-            // Set up suggested bindings for the hp/mixed_reality_controller profile.
-            if (m_optionalExtensions.HPMRControllerSupported) {
-                std::vector<XrActionSuggestedBinding> bindings;
-                bindings.push_back({m_placeAction.Get(), GetXrPath("/user/hand/right/input/trigger/value")});
-                bindings.push_back({m_placeAction.Get(), GetXrPath("/user/hand/left/input/trigger/value")});
-                bindings.push_back({m_poseAction.Get(), GetXrPath("/user/hand/right/input/grip/pose")});
-                bindings.push_back({m_poseAction.Get(), GetXrPath("/user/hand/left/input/grip/pose")});
-                bindings.push_back({m_vibrateAction.Get(), GetXrPath("/user/hand/right/output/haptic")});
-                bindings.push_back({m_vibrateAction.Get(), GetXrPath("/user/hand/left/output/haptic")});
-                bindings.push_back({m_exitAction.Get(), GetXrPath("/user/hand/right/input/squeeze/value")});
-                bindings.push_back({m_exitAction.Get(), GetXrPath("/user/hand/left/input/squeeze/value")});
-
-                XrInteractionProfileSuggestedBinding suggestedBindings{XR_TYPE_INTERACTION_PROFILE_SUGGESTED_BINDING};
-                suggestedBindings.interactionProfile = GetXrPath("/interaction_profiles/hp/mixed_reality_controller");
                 suggestedBindings.suggestedBindings = bindings.data();
                 suggestedBindings.countSuggestedBindings = (uint32_t)bindings.size();
                 CHECK_XRCMD(xrSuggestInteractionProfileBindings(m_instance.Get(), &suggestedBindings));
@@ -305,13 +283,7 @@ namespace {
 
             // Create a app space to bridge interactions and all holograms.
             {
-                if (m_optionalExtensions.UnboundedRefSpaceSupported) {
-                    // Unbounded reference space provides the best app space for world-scale experiences.
-                    m_appSpaceType = XR_REFERENCE_SPACE_TYPE_UNBOUNDED_MSFT;
-                } else {
-                    // If running on a platform that does not support world-scale experiences, fall back to local space.
-                    m_appSpaceType = XR_REFERENCE_SPACE_TYPE_LOCAL;
-                }
+                m_appSpaceType = XR_REFERENCE_SPACE_TYPE_LOCAL;
 
                 XrReferenceSpaceCreateInfo spaceCreateInfo{XR_TYPE_REFERENCE_SPACE_CREATE_INFO};
                 spaceCreateInfo.referenceSpaceType = m_appSpaceType;
@@ -523,35 +495,12 @@ namespace {
         }
 
         struct Hologram;
-        Hologram CreateHologram(const XrPosef& poseInAppSpace, XrTime placementTime) const {
+        Hologram CreateHologram(const XrPosef& poseInAppSpace) const {
             Hologram hologram{};
-            if (m_optionalExtensions.SpatialAnchorSupported) {
-                // Anchors provide the best stability when moving beyond 5 meters, so if the extension is enabled,
-                // create an anchor at given location and place the hologram at the resulting anchor space.
-                XrSpatialAnchorCreateInfoMSFT createInfo{XR_TYPE_SPATIAL_ANCHOR_CREATE_INFO_MSFT};
-                createInfo.space = m_appSpace.Get();
-                createInfo.pose = poseInAppSpace;
-                createInfo.time = placementTime;
-
-                XrResult result = xrCreateSpatialAnchorMSFT(m_session.Get(), &createInfo, hologram.Anchor.Put(xrDestroySpatialAnchorMSFT));
-                if (XR_SUCCEEDED(result)) {
-                    XrSpatialAnchorSpaceCreateInfoMSFT createSpaceInfo{XR_TYPE_SPATIAL_ANCHOR_SPACE_CREATE_INFO_MSFT};
-                    createSpaceInfo.anchor = hologram.Anchor.Get();
-                    createSpaceInfo.poseInAnchorSpace = xr::math::Pose::Identity();
-                    CHECK_XRCMD(xrCreateSpatialAnchorSpaceMSFT(m_session.Get(), &createSpaceInfo, hologram.Cube.Space.Put(xrDestroySpace)));
-                } else if (result == XR_ERROR_CREATE_SPATIAL_ANCHOR_FAILED_MSFT) {
-                    DEBUG_PRINT("Anchor cannot be created, likely due to lost positional tracking.");
-                } else {
-                    CHECK_XRRESULT(result, "xrCreateSpatialAnchorMSFT");
-                }
-            } else {
-                // If the anchor extension is not available, place hologram in the app space.
-                // This works fine as long as user doesn't move far away from app space origin.
-                XrReferenceSpaceCreateInfo createInfo{XR_TYPE_REFERENCE_SPACE_CREATE_INFO};
-                createInfo.referenceSpaceType = m_appSpaceType;
-                createInfo.poseInReferenceSpace = poseInAppSpace;
-                CHECK_XRCMD(xrCreateReferenceSpace(m_session.Get(), &createInfo, hologram.Cube.Space.Put(xrDestroySpace)));
-            }
+            XrReferenceSpaceCreateInfo createInfo{XR_TYPE_REFERENCE_SPACE_CREATE_INFO};
+            createInfo.referenceSpaceType = m_appSpaceType;
+            createInfo.poseInReferenceSpace = poseInAppSpace;
+            CHECK_XRCMD(xrCreateReferenceSpace(m_session.Get(), &createInfo, hologram.Cube.Space.Put(xrDestroySpace)));
             return hologram;
         }
 
@@ -602,7 +551,7 @@ namespace {
                         DEBUG_PRINT("Cube cannot be placed when positional tracking is lost.");
                     } else {
                         // Place a new cube at the given location and time, and remember output placement space and anchor.
-                        m_holograms.push_back(CreateHologram(handLocation.pose, placementTime));
+                        m_holograms.push_back(CreateHologram(handLocation.pose));
                     }
 
                     ApplyVibration();
@@ -744,8 +693,9 @@ namespace {
 
                 const XrDuration duration = predictedDisplayTime - m_spinningCubeStartTime;
                 const double seconds = convertToSeconds(duration);
-                const float angle = static_cast<float>(std::fmod(DirectX::XM_PIDIV2 * seconds, static_cast<double>(DirectX::XM_2PI))); // Rotate 90 degrees per second
-                const float radius = 0.5f;                        // Rotation radius in meters
+                const float angle = static_cast<float>(
+                    std::fmod(DirectX::XM_PIDIV2 * seconds, static_cast<double>(DirectX::XM_2PI))); // Rotate 90 degrees per second
+                const float radius = 0.5f;                                                          // Rotation radius in meters
 
                 // Let spinning cube rotate around the main cube's y axis.
                 XrPosef pose;
@@ -890,10 +840,7 @@ namespace {
 
         struct {
             bool DepthExtensionSupported{false};
-            bool UnboundedRefSpaceSupported{false};
-            bool SpatialAnchorSupported{false};
             bool MsftHandInteractionSupported{false};
-            bool HPMRControllerSupported{false};
         } m_optionalExtensions;
 
         xr::SpaceHandle m_appSpace;
@@ -901,7 +848,6 @@ namespace {
 
         struct Hologram {
             sample::Cube Cube;
-            xr::SpatialAnchorHandle Anchor;
         };
         std::vector<Hologram> m_holograms;
 

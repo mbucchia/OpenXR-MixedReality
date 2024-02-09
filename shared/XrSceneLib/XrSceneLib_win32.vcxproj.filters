@@ -24,9 +24,6 @@
     <ClCompile Include="QuadLayerObject.cpp">
       <Filter>Layers</Filter>
     </ClCompile>
-    <ClCompile Include="ControllerObject.cpp">
-      <Filter>Objects</Filter>
-    </ClCompile>
     <ClCompile Include="SpaceObject.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
@@ -63,9 +60,6 @@
     </ClInclude>
     <ClInclude Include="QuadLayerObject.h">
       <Filter>Layers</Filter>
-    </ClInclude>
-    <ClInclude Include="ControllerObject.h">
-      <Filter>Objects</Filter>
     </ClInclude>
     <ClInclude Include="SpaceObject.h">
       <Filter>Objects</Filter>

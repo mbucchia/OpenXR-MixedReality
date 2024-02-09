@@ -202,12 +202,6 @@ namespace {
 
         xr::InsertExtensionStruct(sessionCreateInfo, d3d11Binding);
 
-        XrHolographicWindowAttachmentMSFT holographicWindowAttachment;
-        if (m_appConfiguration.HolographicWindowAttachment.has_value() && extensions.SupportsHolographicWindowAttachment) {
-            holographicWindowAttachment = m_appConfiguration.HolographicWindowAttachment.value();
-            xr::InsertExtensionStruct(sessionCreateInfo, holographicWindowAttachment);
-        }
-
         CHECK_XRCMD(xrCreateSession(instance.Handle, &sessionCreateInfo, sessionHandle.Put(xrDestroySession)));
 
         sample::SessionContext session(std::move(sessionHandle),
@@ -231,8 +225,7 @@ namespace {
         CHECK_XRCMD(xrCreateReferenceSpace(session.Handle, &spaceCreateInfo, m_viewSpace.Put(xrDestroySpace)));
 
         // Create main app space
-        spaceCreateInfo.referenceSpaceType =
-            extensions.SupportsUnboundedSpace ? XR_REFERENCE_SPACE_TYPE_UNBOUNDED_MSFT : XR_REFERENCE_SPACE_TYPE_LOCAL;
+        spaceCreateInfo.referenceSpaceType = XR_REFERENCE_SPACE_TYPE_LOCAL;
         CHECK_XRCMD(xrCreateReferenceSpace(session.Handle, &spaceCreateInfo, m_appSpace.Put(xrDestroySpace)));
 
         Pbr::Resources pbrResources = sample::InitializePbrResources(device.get());

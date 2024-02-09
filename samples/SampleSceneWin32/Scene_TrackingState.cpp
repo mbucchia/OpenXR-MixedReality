@@ -47,14 +47,6 @@ namespace {
                                                                   });
             }
 
-            if (context.Extensions.SupportsHPMixedRealityController) {
-                ActionContext().SuggestInteractionProfileBindings("/interaction_profiles/hp/mixed_reality_controller",
-                                                                  {
-                                                                      {m_gripSpaceAction, "/user/hand/left/input/grip/pose"},
-                                                                      {m_gripSpaceAction, "/user/hand/right/input/grip/pose"},
-                                                                  });
-            }
-
             XrActionSpaceCreateInfo spaceCreateInfo{XR_TYPE_ACTION_SPACE_CREATE_INFO};
             spaceCreateInfo.poseInActionSpace = Pose::Identity();
             spaceCreateInfo.action = m_gripSpaceAction;

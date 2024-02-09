@@ -53,8 +53,6 @@ namespace sample {
             assert(xr::Contains(SupportedReferenceSpaces, XR_REFERENCE_SPACE_TYPE_VIEW));
             assert(xr::Contains(SupportedReferenceSpaces, XR_REFERENCE_SPACE_TYPE_LOCAL));
             SupportsStageSpace = xr::Contains(SupportedReferenceSpaces, XR_REFERENCE_SPACE_TYPE_STAGE);
-            SupportsUnboundedSpace =
-                extensions.SupportsUnboundedSpace && xr::Contains(SupportedReferenceSpaces, XR_REFERENCE_SPACE_TYPE_UNBOUNDED_MSFT);
         }
 
     private:
