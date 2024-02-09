@@ -11,6 +11,7 @@ std::unique_ptr<engine::Scene> TryCreateTitleScene(engine::Context& context);
 std::unique_ptr<engine::Scene> TryCreateControllerActionsScene(engine::Context& context);
 std::unique_ptr<engine::Scene> TryCreateHandTrackingScene(engine::Context& context);
 std::unique_ptr<engine::Scene> TryCreateTrackingStateScene(engine::Context& context);
+std::unique_ptr<engine::Scene> TryCreateQuadLayerScene(engine::Context& context);
 
 // Global Variables:
 std::thread sceneThread;
@@ -52,6 +53,7 @@ void EnterVR() {
         app->AddScene(TryCreateControllerActionsScene(app->Context()));
         app->AddScene(TryCreateHandTrackingScene(app->Context()));
         app->AddScene(TryCreateTrackingStateScene(app->Context()));
+        app->AddScene(TryCreateQuadLayerScene(app->Context()));
         app->Run();
         app = nullptr;
     });

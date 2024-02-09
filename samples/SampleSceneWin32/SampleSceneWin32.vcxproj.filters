@@ -6,6 +6,7 @@
     <ClCompile Include="Scene_ControllerActions.cpp" />
     <ClCompile Include="..\SampleSceneUwp\Scene_HandTracking.cpp" />
     <ClCompile Include="Scene_TrackingState.cpp" />
+    <ClCompile Include="Scene_QuadLayers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />

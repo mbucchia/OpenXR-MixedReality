@@ -106,6 +106,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Scene_ControllerActions.cpp" />
     <ClCompile Include="..\SampleSceneUwp\Scene_HandTracking.cpp" />
+    <ClCompile Include="Scene_QuadLayers.cpp" />
     <ClCompile Include="Scene_TrackingState.cpp" />
   </ItemGroup>
   <ItemGroup>
