@@ -28,6 +28,7 @@ namespace {
 
     constexpr char const* aimPoseActionName[xr::Side::Count] = {"left_aim", "right_aim"};
     constexpr char const* gripPoseActionName[xr::Side::Count] = {"left_grip", "right_grip"};
+    constexpr char const* palmPoseActionName[xr::Side::Count] = {"left_palm", "right_palm"};
 
     //
     // This sample visualizes the current interaction profile and its controller components
@@ -36,7 +37,7 @@ namespace {
     struct ControllerActionsScene : public engine::Scene {
         ControllerActionsScene(engine::Context& context)
             : Scene(context)
-            , m_actions(CreateActions(ActionContext(), "controller_actions_scene_actionset")) {
+            , m_actions(CreateActions(context, ActionContext(), "controller_actions_scene_actionset")) {
             for (auto side : {xr::Side::Left, xr::Side::Right}) {
                 ControllerData& controllerData = m_controllerData[side];
                 controllerData.side = side;
@@ -68,6 +69,16 @@ namespace {
 
                     auto axis = AddObject(engine::CreateAxis(m_context.PbrResources, 0.05f, 0.001f));
                     axis->SetParent(controllerData.gripRoot);
+                }
+
+                // Initialize objects attached to palm pose
+                if (context.Extensions.SupportsPalmPose) {
+                    XrAction palmAction = FindAction(m_actions, palmPoseActionName[side]).action;
+                    xr::SpaceHandle palmSpace = CreateActionSpace(context.Session.Handle, palmAction);
+                    controllerData.palmRoot = AddObject(engine::CreateSpaceObject(std::move(palmSpace)));
+
+                    auto axis = AddObject(engine::CreateAxis(m_context.PbrResources, 0.05f, 0.001f));
+                    axis->SetParent(controllerData.palmRoot);
                 }
 
                 m_interactionProfilesDirty = true;
@@ -154,6 +165,7 @@ namespace {
 
             std::shared_ptr<engine::Object> gripRoot;
             std::shared_ptr<engine::Object> aimRoot;
+            std::shared_ptr<engine::Object> palmRoot;
         };
 
         const std::vector<ActionInfo> m_actions;
@@ -161,7 +173,9 @@ namespace {
         std::atomic<bool> m_interactionProfilesDirty{false};
 
     private:
-        static std::vector<ActionInfo> CreateActions(sample::ActionContext& actionContext, const char* actionSetName) {
+        static std::vector<ActionInfo> CreateActions(engine::Context& context,
+                                                     sample::ActionContext& actionContext,
+                                                     const char* actionSetName) {
             sample::ActionSet& actionSet = actionContext.CreateActionSet(actionSetName, actionSetName);
             std::vector<ActionInfo> actions{};
 
@@ -372,6 +386,18 @@ namespace {
                               {InteractionProfiles::ViveController, "grip/pose", UserHandPath[side]},
                               {InteractionProfiles::IndexController, "grip/pose", UserHandPath[side]},
                           });
+
+                if (context.Extensions.SupportsPalmPose) {
+                    addAction(palmPoseActionName[side],
+                              XR_ACTION_TYPE_POSE_INPUT,
+                              {
+                                  {InteractionProfiles::SimpleController, "palm/pose", UserHandPath[side]},
+                                  {InteractionProfiles::MotionController, "palm/pose", UserHandPath[side]},
+                                  {InteractionProfiles::TouchController, "palm/pose", UserHandPath[side]},
+                                  {InteractionProfiles::ViveController, "palm/pose", UserHandPath[side]},
+                                  {InteractionProfiles::IndexController, "palm/pose", UserHandPath[side]},
+                              });
+                }
             }
 
             return actions;

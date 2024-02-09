@@ -38,8 +38,7 @@ void EnterVR() {
 
         engine::XrAppConfiguration appConfig({"SampleSceneWin32", 1});
         appConfig.RequestedExtensions.push_back(XR_EXT_HAND_TRACKING_EXTENSION_NAME);
-        appConfig.RequestedExtensions.push_back(XR_EXT_HAND_JOINTS_MOTION_RANGE_EXTENSION_NAME);
-        appConfig.RequestedExtensions.push_back(XR_MSFT_HAND_TRACKING_MESH_EXTENSION_NAME);
+        appConfig.RequestedExtensions.push_back(XR_EXT_PALM_POSE_EXTENSION_NAME);
 
         // NOTE: Uncomment a filter below to test specific action binding of given profile.
         // appConfig.InteractionProfilesFilter.push_back("/interaction_profiles/microsoft/motion_controller");
