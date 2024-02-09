@@ -18,6 +18,7 @@ namespace xr {
         bool SupportsAppContainer{false};
         bool SupportsColorScaleBias{false};
         bool SupportsPalmPose{false};
+        bool SupportsViveTrackers{false};
 
         std::vector<const char*> EnabledExtensions;
 
@@ -60,6 +61,7 @@ namespace xr {
         extensions.SupportsHandJointTracking = extensions.IsEnabled(XR_EXT_HAND_TRACKING_EXTENSION_NAME);
         extensions.SupportsColorScaleBias = extensions.IsEnabled(XR_KHR_COMPOSITION_LAYER_COLOR_SCALE_BIAS_EXTENSION_NAME);
         extensions.SupportsPalmPose = extensions.IsEnabled(XR_EXT_PALM_POSE_EXTENSION_NAME);
+        extensions.SupportsViveTrackers = extensions.IsEnabled(XR_HTCX_VIVE_TRACKER_INTERACTION_EXTENSION_NAME);
 
         return extensions;
     }

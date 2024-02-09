@@ -80,6 +80,8 @@
     _(xrDestroyHandTrackerEXT)                    \
     _(xrLocateHandJointsEXT)
 
+#define XR_LIST_FUNCTIONS_XR_HTCX_vive_tracker_interaction(_) _(xrEnumerateViveTrackerPathsHTCX)
+
 // clang-format off
 #define XR_LIST_FUNCTIONS_OPENXR_EXTENSIONS(_, __)                                                                                  \
     XR_KHR_win32_convert_performance_counter_time_DEFINED(XR_LIST_FUNCTIONS_XR_KHR_win32_convert_performance_counter_time, _, __)   \
@@ -88,4 +90,5 @@
     XR_KHR_D3D12_enable_DEFINED(XR_LIST_FUNCTIONS_XR_KHR_D3D12_enable, _, __)                                                       \
     XR_KHR_visibility_mask_DEFINED(XR_LIST_FUNCTIONS_XR_KHR_visibility_mask, _, __)                                                 \
     XR_EXT_hand_tracking_DEFINED(XR_LIST_FUNCTIONS_XR_EXT_hand_tracking, _, __)                                                     \
+    XR_HTCX_vive_tracker_interaction_DEFINED(XR_LIST_FUNCTIONS_XR_HTCX_vive_tracker_interaction, _, __)
 // clang-format on

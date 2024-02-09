@@ -46,3 +46,9 @@
 #else
 #define XR_EXT_palm_pose_DEFINED(_, defined, undefined) _(undefined)
 #endif
+
+#ifdef XR_HTCX_vive_tracker_interaction
+#define XR_HTCX_vive_tracker_interaction_DEFINED(_, defined, undefined) _(defined)
+#else
+#define XR_HTCX_vive_tracker_interaction_DEFINED(_, defined, undefined) _(undefined)
+#endif

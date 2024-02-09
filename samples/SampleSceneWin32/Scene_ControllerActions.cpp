@@ -17,6 +17,19 @@ using namespace std::chrono_literals;
 namespace {
 
     constexpr char const* UserHandPath[xr::Side::Count] = {{"/user/hand/left"}, {"/user/hand/right"}};
+    constexpr char const* UserTrackerPath[] = {{"/user/vive_tracker_htcx/role/handheld_object"},
+                                               {"/user/vive_tracker_htcx/role/left_foot"},
+                                               {"/user/vive_tracker_htcx/role/right_foot"},
+                                               {"/user/vive_tracker_htcx/role/left_shoulder"},
+                                               {"/user/vive_tracker_htcx/role/right_shoulder"},
+                                               {"/user/vive_tracker_htcx/role/left_elbow"},
+                                               {"/user/vive_tracker_htcx/role/right_elbow"},
+                                               {"/user/vive_tracker_htcx/role/left_knee"},
+                                               {"/user/vive_tracker_htcx/role/right_knee"},
+                                               {"/user/vive_tracker_htcx/role/waist"},
+                                               {"/user/vive_tracker_htcx/role/chest"},
+                                               {"/user/vive_tracker_htcx/role/camera"},
+                                               {"/user/vive_tracker_htcx/role/keyboard"}};
 
     struct InteractionProfiles {
         static constexpr char const* SimpleController = "/interaction_profiles/khr/simple_controller";
@@ -24,11 +37,25 @@ namespace {
         static constexpr char const* TouchController = "/interaction_profiles/oculus/touch_controller";
         static constexpr char const* ViveController = "/interaction_profiles/htc/vive_controller";
         static constexpr char const* IndexController = "/interaction_profiles/valve/index_controller";
+        static constexpr char const* ViveTracker = "/interaction_profiles/htc/vive_tracker_htcx";
     };
 
     constexpr char const* aimPoseActionName[xr::Side::Count] = {"left_aim", "right_aim"};
     constexpr char const* gripPoseActionName[xr::Side::Count] = {"left_grip", "right_grip"};
     constexpr char const* palmPoseActionName[xr::Side::Count] = {"left_palm", "right_palm"};
+    constexpr char const* trackerPoseActionName[] = {"handheld_object_pose",
+                                                     "left_foot_pose",
+                                                     "right_foot_pose",
+                                                     "left_shoulder_pose",
+                                                     "right_shoulder_pose",
+                                                     "left_elbow_pose",
+                                                     "right_elbow_pose",
+                                                     "left_knee_pose",
+                                                     "right_knee_pose",
+                                                     "waist_pose",
+                                                     "chest_pose",
+                                                     "camera_pose",
+                                                     "keyboard_pose"};
 
     //
     // This sample visualizes the current interaction profile and its controller components
@@ -38,16 +65,17 @@ namespace {
         ControllerActionsScene(engine::Context& context)
             : Scene(context)
             , m_actions(CreateActions(context, ActionContext(), "controller_actions_scene_actionset")) {
-            for (auto side : {xr::Side::Left, xr::Side::Right}) {
+            const size_t upperBound = context.Extensions.SupportsViveTrackers ? std::size(m_controllerData) : xr::Side::Count;
+            for (uint32_t side = 0; side < upperBound; side++) {
                 ControllerData& controllerData = m_controllerData[side];
                 controllerData.side = side;
-                controllerData.userPathString = UserHandPath[side];
-                controllerData.userPath = xr::StringToPath(m_context.Instance.Handle, UserHandPath[side]);
+                controllerData.userPathString = side < xr::Side::Count ? UserHandPath[side] : UserTrackerPath[side - xr::Side::Count];
+                controllerData.userPath = xr::StringToPath(m_context.Instance.Handle, controllerData.userPathString.c_str());
 
                 InitializeSuggestBindings(side, ActionContext(), m_context.Extensions, m_actions);
 
                 // Initialize objects attached to aim pose
-                {
+                if (side == xr::Side::Left || side == xr::Side::Right) {
                     XrAction aimAction = FindAction(m_actions, aimPoseActionName[side]).action;
                     xr::SpaceHandle aimSpace = CreateActionSpace(context.Session.Handle, aimAction);
                     controllerData.aimRoot = AddObject(engine::CreateSpaceObject(std::move(aimSpace)));
@@ -63,7 +91,10 @@ namespace {
 
                 // Initialize objects attached to grip pose
                 {
-                    XrAction gripAction = FindAction(m_actions, gripPoseActionName[side]).action;
+                    XrAction gripAction =
+                        FindAction(m_actions,
+                                   side < xr::Side::Count ? gripPoseActionName[side] : trackerPoseActionName[side - xr::Side::Count])
+                            .action;
                     xr::SpaceHandle gripSpace = CreateActionSpace(context.Session.Handle, gripAction);
                     controllerData.gripRoot = AddObject(engine::CreateSpaceObject(std::move(gripSpace)));
 
@@ -72,7 +103,7 @@ namespace {
                 }
 
                 // Initialize objects attached to palm pose
-                if (context.Extensions.SupportsPalmPose) {
+                if (context.Extensions.SupportsPalmPose && (side == xr::Side::Left || side == xr::Side::Right)) {
                     XrAction palmAction = FindAction(m_actions, palmPoseActionName[side]).action;
                     xr::SpaceHandle palmSpace = CreateActionSpace(context.Session.Handle, palmAction);
                     controllerData.palmRoot = AddObject(engine::CreateSpaceObject(std::move(palmSpace)));
@@ -83,11 +114,29 @@ namespace {
 
                 m_interactionProfilesDirty = true;
             }
+
+            if (context.Extensions.SupportsViveTrackers) {
+                uint32_t count = 0;
+                CHECK_XRCMD(xrEnumerateViveTrackerPathsHTCX(m_context.Instance.Handle, 0, &count, nullptr));
+                std::vector<XrViveTrackerPathsHTCX> trackers(count, {XR_TYPE_VIVE_TRACKER_PATHS_HTCX});
+                CHECK_XRCMD(xrEnumerateViveTrackerPathsHTCX(m_context.Instance.Handle, count, &count, trackers.data()));
+
+                for (const XrViveTrackerPathsHTCX& tracker : trackers) {
+                    std::string persistentPath = tracker.persistentPath == XR_NULL_PATH
+                                                     ? "NULL"
+                                                     : xr::PathToString(m_context.Instance.Handle, tracker.persistentPath);
+                    std::string rolePath =
+                        tracker.rolePath == XR_NULL_PATH ? "NULL" : xr::PathToString(m_context.Instance.Handle, tracker.rolePath);
+                    sample::Trace("Vive Tracker enumerated.\n\tPath: {}\n\tRolePath:{}\n", persistentPath.c_str(), rolePath.c_str());
+                }
+            }
         }
 
         void OnUpdate(const engine::FrameTime& frameTime) override {
+            const size_t upperBound = m_context.Extensions.SupportsViveTrackers ? std::size(m_controllerData) : xr::Side::Count;
+
             if (m_interactionProfilesDirty.exchange(false)) {
-                for (auto side : {xr::Side::Left, xr::Side::Right}) {
+                for (uint32_t side = 0; side < upperBound; side++) {
                     ControllerData& controllerData = m_controllerData[side];
                     XrInteractionProfileState state{XR_TYPE_INTERACTION_PROFILE_STATE};
                     CHECK_XRCMD(xrGetCurrentInteractionProfile(m_context.Session.Handle, controllerData.userPath, &state));
@@ -98,10 +147,14 @@ namespace {
                 }
             }
 
-            for (auto side : {xr::Side::Left, xr::Side::Right}) {
+            for (uint32_t side = 0; side < upperBound; side++) {
                 // Update the value and visual for each controller component
                 for (auto& component : m_controllerData[side].components) {
-                    UpdateComponentValueVisuals(m_context, xr::StringToPath(m_context.Instance.Handle, UserHandPath[side]), component);
+                    UpdateComponentValueVisuals(
+                        m_context,
+                        xr::StringToPath(m_context.Instance.Handle,
+                                         side < xr::Side::Count ? UserHandPath[side] : UserTrackerPath[side - xr::Side::Count]),
+                        component);
                 }
             }
         }
@@ -121,7 +174,25 @@ namespace {
                                             ? "NULL"
                                             : xr::PathToString(m_context.Instance.Handle, state.interactionProfile);
 
-                sample::Trace("Interaction profile is changed.\n\tLeft: {}\n\tRight:{}\n", leftPath.c_str(), rightPath.c_str());
+                CHECK_XRCMD(xrGetCurrentInteractionProfile(
+                    m_context.Session.Handle, xr::StringToPath(m_context.Instance.Handle, "/user/vive_tracker_htcx"), &state));
+                std::string trackerPath = state.interactionProfile == XR_NULL_PATH
+                                              ? "NULL"
+                                              : xr::PathToString(m_context.Instance.Handle, state.interactionProfile);
+
+                sample::Trace("Interaction profile is changed.\n\tLeft: {}\n\tRight:{}\n\tTracker:{}\n",
+                              leftPath.c_str(),
+                              rightPath.c_str(),
+                              trackerPath.c_str());
+            }
+            if (auto* viveTrackerConnected = xr::event_cast<XrEventDataViveTrackerConnectedHTCX>(&eventData)) {
+                std::string persistentPath = viveTrackerConnected->paths->persistentPath == XR_NULL_PATH
+                                                 ? "NULL"
+                                                 : xr::PathToString(m_context.Instance.Handle, viveTrackerConnected->paths->persistentPath);
+                std::string rolePath = viveTrackerConnected->paths->rolePath == XR_NULL_PATH
+                                           ? "NULL"
+                                           : xr::PathToString(m_context.Instance.Handle, viveTrackerConnected->paths->rolePath);
+                sample::Trace("Vive Tracker connected.\n\tPath: {}\n\tRolePath:{}\n", persistentPath.c_str(), rolePath.c_str());
             }
         }
 
@@ -169,7 +240,7 @@ namespace {
         };
 
         const std::vector<ActionInfo> m_actions;
-        ControllerData m_controllerData[xr::Side::Count]{};
+        ControllerData m_controllerData[xr::Side::Count + std::size(UserTrackerPath)]{};
         std::atomic<bool> m_interactionProfilesDirty{false};
 
     private:
@@ -179,12 +250,17 @@ namespace {
             sample::ActionSet& actionSet = actionContext.CreateActionSet(actionSetName, actionSetName);
             std::vector<ActionInfo> actions{};
 
-            const std::vector<std::string> bothHands = {UserHandPath[xr::Side::Left], UserHandPath[xr::Side::Right]};
+            std::vector<std::string> allSubactionPaths = {UserHandPath[xr::Side::Left], UserHandPath[xr::Side::Right]};
+            if (context.Extensions.SupportsViveTrackers) {
+                for (const auto& role : UserTrackerPath) {
+                    allSubactionPaths.push_back(role);
+                }
+            }
             auto addAction = [&](const char* actionName, XrActionType actionType, std::vector<ActionBinding> bindings) {
                 ActionInfo actionInfo;
                 actionInfo.actionName = actionName;
                 actionInfo.actionType = actionType;
-                actionInfo.action = actionSet.CreateAction(actionName, actionName, actionType, bothHands);
+                actionInfo.action = actionSet.CreateAction(actionName, actionName, actionType, allSubactionPaths);
                 actionInfo.actionBindings = std::move(bindings);
                 actions.emplace_back(actionInfo);
             };
@@ -211,6 +287,7 @@ namespace {
                           {InteractionProfiles::TouchController, "trigger/value", nullptr},
                           {InteractionProfiles::ViveController, "trigger/click", nullptr},
                           {InteractionProfiles::IndexController, "trigger/click", nullptr},
+                          {InteractionProfiles::ViveTracker, "trigger/click", nullptr},
                       });
             addAction("trigger_touch",
                       XR_ACTION_TYPE_BOOLEAN_INPUT,
@@ -231,6 +308,7 @@ namespace {
                           {InteractionProfiles::TouchController, "squeeze/value", nullptr},
                           {InteractionProfiles::ViveController, "squeeze/click", nullptr},
                           {InteractionProfiles::IndexController, "squeeze/value", nullptr},
+                          {InteractionProfiles::ViveTracker, "squeeze/click", nullptr},
                       });
             addAction("squeeze_force",
                       XR_ACTION_TYPE_FLOAT_INPUT,
@@ -275,6 +353,7 @@ namespace {
                           {InteractionProfiles::MotionController, "trackpad/x", nullptr},
                           {InteractionProfiles::ViveController, "trackpad/x", nullptr},
                           {InteractionProfiles::IndexController, "trackpad/x", nullptr},
+                          {InteractionProfiles::ViveTracker, "trackpad/x", nullptr},
                       });
             addAction("trackpad_y",
                       XR_ACTION_TYPE_FLOAT_INPUT,
@@ -282,6 +361,7 @@ namespace {
                           {InteractionProfiles::MotionController, "trackpad/y", nullptr},
                           {InteractionProfiles::ViveController, "trackpad/y", nullptr},
                           {InteractionProfiles::IndexController, "trackpad/y", nullptr},
+                          {InteractionProfiles::ViveTracker, "trackpad/y", nullptr},
                       });
             addAction("trackpad_touch",
                       XR_ACTION_TYPE_FLOAT_INPUT,
@@ -289,6 +369,7 @@ namespace {
                           {InteractionProfiles::MotionController, "trackpad/touch", nullptr},
                           {InteractionProfiles::ViveController, "trackpad/touch", nullptr},
                           {InteractionProfiles::IndexController, "trackpad/touch", nullptr},
+                          {InteractionProfiles::ViveTracker, "trackpad/touch", nullptr},
                       });
             addAction("trackpad_force",
                       XR_ACTION_TYPE_FLOAT_INPUT,
@@ -300,6 +381,7 @@ namespace {
                       {
                           {InteractionProfiles::MotionController, "trackpad/click", nullptr},
                           {InteractionProfiles::ViveController, "trackpad/click", nullptr},
+                          {InteractionProfiles::ViveTracker, "trackpad/click", nullptr},
                       });
             addAction("a",
                       XR_ACTION_TYPE_BOOLEAN_INPUT,
@@ -352,6 +434,7 @@ namespace {
                           {InteractionProfiles::MotionController, "menu/click", nullptr},
                           {InteractionProfiles::TouchController, "menu/click", UserHandPath[xr::Side::Left]},
                           {InteractionProfiles::ViveController, "menu/click", nullptr},
+                          {InteractionProfiles::ViveTracker, "menu/click", nullptr},
                       });
             addAction("system",
                       XR_ACTION_TYPE_BOOLEAN_INPUT,
@@ -359,6 +442,7 @@ namespace {
                           {InteractionProfiles::TouchController, "system/click", UserHandPath[xr::Side::Right]},
                           {InteractionProfiles::ViveController, "system/click", nullptr},
                           {InteractionProfiles::IndexController, "system/click", nullptr},
+                          {InteractionProfiles::ViveTracker, "system/click", nullptr},
                       });
             addAction("system_touch",
                       XR_ACTION_TYPE_BOOLEAN_INPUT,
@@ -391,11 +475,21 @@ namespace {
                     addAction(palmPoseActionName[side],
                               XR_ACTION_TYPE_POSE_INPUT,
                               {
-                                  {InteractionProfiles::SimpleController, "palm/pose", UserHandPath[side]},
-                                  {InteractionProfiles::MotionController, "palm/pose", UserHandPath[side]},
-                                  {InteractionProfiles::TouchController, "palm/pose", UserHandPath[side]},
-                                  {InteractionProfiles::ViveController, "palm/pose", UserHandPath[side]},
-                                  {InteractionProfiles::IndexController, "palm/pose", UserHandPath[side]},
+                                  {InteractionProfiles::SimpleController, "palm_ext/pose", UserHandPath[side]},
+                                  {InteractionProfiles::MotionController, "palm_ext/pose", UserHandPath[side]},
+                                  {InteractionProfiles::TouchController, "palm_ext/pose", UserHandPath[side]},
+                                  {InteractionProfiles::ViveController, "palm_ext/pose", UserHandPath[side]},
+                                  {InteractionProfiles::IndexController, "palm_ext/pose", UserHandPath[side]},
+                              });
+                }
+            }
+
+            if (context.Extensions.SupportsViveTrackers) {
+                for (uint32_t index = 0; index < std::size(trackerPoseActionName); index++) {
+                    addAction(trackerPoseActionName[index],
+                              XR_ACTION_TYPE_POSE_INPUT,
+                              {
+                                  {InteractionProfiles::ViveTracker, "grip/pose", UserTrackerPath[index]},
                               });
                 }
             }
@@ -424,31 +518,47 @@ namespace {
                                               sample::ActionContext& actionContext,
                                               const xr::ExtensionContext& extensions,
                                               const std::vector<ActionInfo>& actions) {
-            const std::string subactionPath = UserHandPath[side];
-
-            std::map<std::string, std::vector<sample::ActionContext::ActionBinding>> suggestedBindings;
-            for (const auto& actionInfo : actions) {
-                XrAction action = actionInfo.action;
-                for (const auto& [profilePath, componentPath, subactionPath] : actionInfo.actionBindings) {
-                    if (subactionPath == nullptr) {
-                        suggestedBindings[profilePath].push_back({action, std::string() + "/user/hand/left/input/" + componentPath});
-                        suggestedBindings[profilePath].push_back({action, std::string() + "/user/hand/right/input/" + componentPath});
-                    } else {
-                        suggestedBindings[profilePath].push_back({action, std::string() + subactionPath + "/input/" + componentPath});
+            if (side == xr::Side::Left || side == xr::Side::Right) {
+                std::map<std::string, std::vector<sample::ActionContext::ActionBinding>> suggestedBindings;
+                for (const auto& actionInfo : actions) {
+                    XrAction action = actionInfo.action;
+                    for (const auto& [profilePath, componentPath, subactionPath] : actionInfo.actionBindings) {
+                        if (subactionPath == nullptr) {
+                            suggestedBindings[profilePath].push_back({action, std::string() + "/user/hand/left/input/" + componentPath});
+                            suggestedBindings[profilePath].push_back({action, std::string() + "/user/hand/right/input/" + componentPath});
+                        } else {
+                            suggestedBindings[profilePath].push_back({action, std::string() + subactionPath + "/input/" + componentPath});
+                        }
                     }
                 }
-            }
 
-            actionContext.SuggestInteractionProfileBindings(InteractionProfiles::SimpleController,
-                                                            suggestedBindings[InteractionProfiles::SimpleController]);
-            actionContext.SuggestInteractionProfileBindings(InteractionProfiles::MotionController,
-                                                            suggestedBindings[InteractionProfiles::MotionController]);
-            actionContext.SuggestInteractionProfileBindings(InteractionProfiles::TouchController,
-                                                            suggestedBindings[InteractionProfiles::TouchController]);
-            actionContext.SuggestInteractionProfileBindings(InteractionProfiles::ViveController,
-                                                            suggestedBindings[InteractionProfiles::ViveController]);
-            actionContext.SuggestInteractionProfileBindings(InteractionProfiles::IndexController,
-                                                            suggestedBindings[InteractionProfiles::IndexController]);
+                actionContext.SuggestInteractionProfileBindings(InteractionProfiles::SimpleController,
+                                                                suggestedBindings[InteractionProfiles::SimpleController]);
+                actionContext.SuggestInteractionProfileBindings(InteractionProfiles::MotionController,
+                                                                suggestedBindings[InteractionProfiles::MotionController]);
+                actionContext.SuggestInteractionProfileBindings(InteractionProfiles::TouchController,
+                                                                suggestedBindings[InteractionProfiles::TouchController]);
+                actionContext.SuggestInteractionProfileBindings(InteractionProfiles::ViveController,
+                                                                suggestedBindings[InteractionProfiles::ViveController]);
+                actionContext.SuggestInteractionProfileBindings(InteractionProfiles::IndexController,
+                                                                suggestedBindings[InteractionProfiles::IndexController]);
+            } else {
+                std::map<std::string, std::vector<sample::ActionContext::ActionBinding>> suggestedBindings;
+                for (const auto& actionInfo : actions) {
+                    XrAction action = actionInfo.action;
+                    for (const auto& [profilePath, componentPath, subactionPath] : actionInfo.actionBindings) {
+                        if (subactionPath == nullptr) {
+                            suggestedBindings[profilePath].push_back(
+                                {action, std::string() + UserTrackerPath[side - xr::Side::Count] + "/input/" + componentPath});
+                        } else {
+                            suggestedBindings[profilePath].push_back({action, std::string() + subactionPath + "/input/" + componentPath});
+                        }
+                    }
+                }
+
+                actionContext.SuggestInteractionProfileBindings(InteractionProfiles::ViveTracker,
+                                                                suggestedBindings[InteractionProfiles::ViveTracker]);
+            }
         }
 
         // Update the visualization of controller components when interaction profile is changed.
@@ -479,7 +589,9 @@ namespace {
                     auto it =
                         std::find_if(actionInfo.actionBindings.begin(), actionInfo.actionBindings.end(), [&](const ActionBinding& binding) {
                             return strcmp(binding.interactionProfile, controllerData.interactionProfileName.c_str()) == 0 &&
-                                   (binding.subactionPath == nullptr || strcmp(binding.subactionPath, UserHandPath[side]) == 0);
+                                   (binding.subactionPath == nullptr ||
+                                    strcmp(binding.subactionPath,
+                                           side < xr::Side::Count ? UserHandPath[side] : UserTrackerPath[side - xr::Side::Count]) == 0);
                         });
 
                     if (it == actionInfo.actionBindings.end()) {
