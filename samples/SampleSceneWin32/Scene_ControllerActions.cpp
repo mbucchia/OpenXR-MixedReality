@@ -189,11 +189,12 @@ namespace {
                           {InteractionProfiles::ViveController, "trigger/value", nullptr},
                           {InteractionProfiles::IndexController, "trigger/value", nullptr},
                       });
+
             addAction("trigger_click",
                       XR_ACTION_TYPE_BOOLEAN_INPUT,
                       {
-                          {InteractionProfiles::MotionController, "trigger/click", nullptr},
-                          {InteractionProfiles::TouchController, "trigger/click", nullptr},
+                          {InteractionProfiles::MotionController, "trigger/value", nullptr},
+                          {InteractionProfiles::TouchController, "trigger/value", nullptr},
                           {InteractionProfiles::ViveController, "trigger/click", nullptr},
                           {InteractionProfiles::IndexController, "trigger/click", nullptr},
                       });
@@ -213,9 +214,9 @@ namespace {
                       XR_ACTION_TYPE_BOOLEAN_INPUT,
                       {
                           {InteractionProfiles::MotionController, "squeeze/click", nullptr},
-                          {InteractionProfiles::TouchController, "squeeze/click", nullptr},
+                          {InteractionProfiles::TouchController, "squeeze/value", nullptr},
                           {InteractionProfiles::ViveController, "squeeze/click", nullptr},
-                          {InteractionProfiles::IndexController, "squeeze/click", nullptr},
+                          {InteractionProfiles::IndexController, "squeeze/value", nullptr},
                       });
             addAction("squeeze_force",
                       XR_ACTION_TYPE_FLOAT_INPUT,
