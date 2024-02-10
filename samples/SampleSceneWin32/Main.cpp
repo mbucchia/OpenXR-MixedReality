@@ -8,12 +8,13 @@
 #include "Resource.h"
 
 std::unique_ptr<engine::Scene> TryCreateTitleScene(engine::Context& context);
+std::unique_ptr<engine::Scene> TryCreateAnimationScene(engine::Context& context);
+std::unique_ptr<engine::Scene> TryCreateVisibilityMaskScene(engine::Context& context);
 std::unique_ptr<engine::Scene> TryCreateControllerActionsScene(engine::Context& context);
 std::unique_ptr<engine::Scene> TryCreateHandTrackingScene(engine::Context& context);
 std::unique_ptr<engine::Scene> TryCreateTrackingStateScene(engine::Context& context);
 std::unique_ptr<engine::Scene> TryCreateQuadLayerScene(engine::Context& context);
 std::unique_ptr<engine::Scene> TryCreateEyeGazeInteractionScene(engine::Context& context);
-std::unique_ptr<engine::Scene> TryCreateAnimationScene(engine::Context& context);
 
 // Global Variables:
 std::thread sceneThread;
@@ -39,6 +40,7 @@ void EnterVR() {
         auto on_exit = MakeScopeGuard([] { ::CoUninitialize(); });
 
         engine::XrAppConfiguration appConfig({"SampleSceneWin32", 1});
+        appConfig.RequestedExtensions.push_back(XR_KHR_VISIBILITY_MASK_EXTENSION_NAME);
         appConfig.RequestedExtensions.push_back(XR_EXT_HAND_TRACKING_EXTENSION_NAME);
         appConfig.RequestedExtensions.push_back(XR_EXT_PALM_POSE_EXTENSION_NAME);
         appConfig.RequestedExtensions.push_back(XR_EXT_EYE_GAZE_INTERACTION_EXTENSION_NAME);
@@ -54,6 +56,7 @@ void EnterVR() {
         app = engine::CreateXrApp(appConfig);
         app->AddScene(TryCreateTitleScene(app->Context()));
         app->AddScene(TryCreateAnimationScene(app->Context()));
+        app->AddScene(TryCreateVisibilityMaskScene(app->Context()));
         app->AddScene(TryCreateControllerActionsScene(app->Context()));
         app->AddScene(TryCreateHandTrackingScene(app->Context()));
         app->AddScene(TryCreateTrackingStateScene(app->Context()));

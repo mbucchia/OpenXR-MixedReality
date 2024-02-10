@@ -9,6 +9,7 @@
     <ClCompile Include="Scene_QuadLayers.cpp" />
     <ClCompile Include="..\EyeGazeInteractionUwp\Scene_EyeGazeInteraction.cpp" />
     <ClCompile Include="Scene_Animation.cpp" />
+    <ClCompile Include="Scene_VisibilityMask.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />

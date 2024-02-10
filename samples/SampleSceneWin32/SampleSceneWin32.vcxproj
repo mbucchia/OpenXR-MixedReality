@@ -134,6 +134,7 @@
     <ClCompile Include="..\SampleSceneUwp\Scene_HandTracking.cpp" />
     <ClCompile Include="Scene_QuadLayers.cpp" />
     <ClCompile Include="Scene_TrackingState.cpp" />
+    <ClCompile Include="Scene_VisibilityMask.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(SharedPath)\XrSceneLib\XrSceneLib_win32.vcxproj">
