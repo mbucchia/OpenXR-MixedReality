@@ -27,8 +27,14 @@ namespace xr {
 #define XR_DISPATCH_TABLE_MEMBER_VOID(name) PFN_xrVoidFunction name{nullptr};
 
         XR_LIST_FUNCTIONS_OPENXR_FUNCTIONS(XR_DISPATCH_TABLE_MEMBER);
+#undef XR_DISPATCH_TABLE_MEMBER
+#undef XR_DISPATCH_TABLE_MEMBER_VOID
+
+#define XR_DISPATCH_TABLE_MEMBER(name, _) PFN_xr##name xr##name{nullptr};
+#define XR_DISPATCH_TABLE_MEMBER_VOID(name, _) PFN_xrVoidFunction xr##name{nullptr};
+
         XR_LIST_FUNCTIONS_OPENXR_EXTENSIONS(XR_DISPATCH_TABLE_MEMBER, XR_DISPATCH_TABLE_MEMBER_VOID);
-#undef XR_DISPATCH_TABLE_DEFINE_MEMBER
+#undef XR_DISPATCH_TABLE_MEMBER
 #undef XR_DISPATCH_TABLE_MEMBER_VOID
 
         void Initialize(XrInstance instance, PFN_xrGetInstanceProcAddr getInstanceProcAddr) {
@@ -42,6 +48,12 @@ namespace xr {
 #define XR_DISPATCH_TABLE_SET_NO_OP(name)
 
             XR_LIST_FUNCTIONS_OPENXR_FUNCTIONS(XR_DISPATCH_TABLE_GET_PROC_ADDRESS);
+#undef XR_DISPATCH_TABLE_GET_PROC_ADDRESS
+#undef XR_DISPATCH_TABLE_SET_NO_OP
+
+#define XR_DISPATCH_TABLE_GET_PROC_ADDRESS(name, _) xr##name = reinterpret_cast<PFN_xr##name>(getFunctionPointer("xr" #name));
+#define XR_DISPATCH_TABLE_SET_NO_OP(name, _)
+
             XR_LIST_FUNCTIONS_OPENXR_EXTENSIONS(XR_DISPATCH_TABLE_GET_PROC_ADDRESS, XR_DISPATCH_TABLE_SET_NO_OP);
 #undef XR_DISPATCH_TABLE_GET_PROC_ADDRESS
 #undef XR_DISPATCH_TABLE_SET_NO_OP
@@ -65,6 +77,12 @@ namespace xr {
     #else
         XR_LIST_FUNCTIONS_OPENXR_FUNCTIONS(XR_DISPATCH_TABLE_GLOBAL);
     #endif
+
+    #undef XR_DISPATCH_TABLE_GLOBAL
+    #undef XR_DISPATCH_TABLE_NO_OP
+
+    #define XR_DISPATCH_TABLE_GLOBAL(name, _) inline const PFN_xr##name& xr##name = xr::g_dispatchTable. xr##name;
+    #define XR_DISPATCH_TABLE_NO_OP(name, _)
 
     #if !defined(XR_NO_PROTOTYPES) && defined(XR_EXTENSION_PROTOTYPES)
         // If openxr.h already defined extension function prototypes

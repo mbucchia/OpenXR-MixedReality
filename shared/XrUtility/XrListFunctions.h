@@ -63,25 +63,6 @@
     _(xrApplyHapticFeedback)                  \
     _(xrStopHapticFeedback)
 
-#define XR_LIST_FUNCTIONS_XR_KHR_win32_convert_performance_counter_time(_) \
-    _(xrConvertWin32PerformanceCounterToTimeKHR)                           \
-    _(xrConvertTimeToWin32PerformanceCounterKHR)
-
-#define XR_LIST_FUNCTIONS_XR_KHR_convert_timespec_time(_) \
-    _(xrConvertTimespecTimeToTimeKHR)                     \
-    _(xrConvertTimeToTimespecTimeKHR)
-
-#define XR_LIST_FUNCTIONS_XR_KHR_D3D11_enable(_) _(xrGetD3D11GraphicsRequirementsKHR)
-#define XR_LIST_FUNCTIONS_XR_KHR_D3D12_enable(_) _(xrGetD3D12GraphicsRequirementsKHR)
-#define XR_LIST_FUNCTIONS_XR_KHR_visibility_mask(_) _(xrGetVisibilityMaskKHR)
-
-#define XR_LIST_FUNCTIONS_XR_EXT_hand_tracking(_) \
-    _(xrCreateHandTrackerEXT)                     \
-    _(xrDestroyHandTrackerEXT)                    \
-    _(xrLocateHandJointsEXT)
-
-#define XR_LIST_FUNCTIONS_XR_HTCX_vive_tracker_interaction(_) _(xrEnumerateViveTrackerPathsHTCX)
-
 // clang-format off
 #define XR_LIST_FUNCTIONS_OPENXR_EXTENSIONS(_, __)                                                                                  \
     XR_KHR_win32_convert_performance_counter_time_DEFINED(XR_LIST_FUNCTIONS_XR_KHR_win32_convert_performance_counter_time, _, __)   \
