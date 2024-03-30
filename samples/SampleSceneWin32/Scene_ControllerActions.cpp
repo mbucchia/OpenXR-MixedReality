@@ -174,11 +174,14 @@ namespace {
                                             ? "NULL"
                                             : xr::PathToString(m_context.Instance.Handle, state.interactionProfile);
 
-                CHECK_XRCMD(xrGetCurrentInteractionProfile(
-                    m_context.Session.Handle, xr::StringToPath(m_context.Instance.Handle, "/user/vive_tracker_htcx"), &state));
-                std::string trackerPath = state.interactionProfile == XR_NULL_PATH
-                                              ? "NULL"
-                                              : xr::PathToString(m_context.Instance.Handle, state.interactionProfile);
+                std::string trackerPath;
+                if (m_context.Extensions.SupportsViveTrackers) {
+                    CHECK_XRCMD(xrGetCurrentInteractionProfile(
+                        m_context.Session.Handle, xr::StringToPath(m_context.Instance.Handle, "/user/vive_tracker_htcx"), &state));
+                    trackerPath = state.interactionProfile == XR_NULL_PATH
+                                      ? "NULL"
+                                      : xr::PathToString(m_context.Instance.Handle, state.interactionProfile);
+                }
 
                 sample::Trace("Interaction profile is changed.\n\tLeft: {}\n\tRight:{}\n\tTracker:{}\n",
                               leftPath.c_str(),
