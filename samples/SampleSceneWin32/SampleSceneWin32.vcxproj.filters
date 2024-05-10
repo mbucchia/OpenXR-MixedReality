@@ -26,10 +26,6 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-    <None Include="$(OpenXRLoaderBinaryRoot)\bin\openxr_loader.dll" />
-  </ItemGroup>
-  <ItemGroup>
     <Filter Include="Resources">
       <UniqueIdentifier>{d833b40e-3939-4c3b-8788-8d0a14dc2bd8}</UniqueIdentifier>
     </Filter>
