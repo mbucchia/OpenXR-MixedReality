@@ -134,6 +134,7 @@ copy ..\..\..\OpenXR-Loader\bin\$(Platform)\openxr_loader.dll $(OutDir)</Command
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="MenuContextScene.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
   </ItemGroup>
@@ -146,7 +147,13 @@ copy ..\..\..\OpenXR-Loader\bin\$(Platform)\openxr_loader.dll $(OutDir)</Command
     <ClCompile Include="Scene_Animation.cpp" />
     <ClCompile Include="Scene_ControllerActions.cpp" />
     <ClCompile Include="..\SampleSceneUwp\Scene_HandTracking.cpp" />
+    <ClCompile Include="Scene_FovModifier.cpp" />
+    <ClCompile Include="Scene_Menu.cpp" />
+    <ClCompile Include="Scene_Pause.cpp" />
+    <ClCompile Include="Scene_ProjectionConfig.cpp" />
+    <ClCompile Include="Scene_ProjectionQuality.cpp" />
     <ClCompile Include="Scene_QuadLayers.cpp" />
+    <ClCompile Include="Scene_SwapchainFormat.cpp" />
     <ClCompile Include="Scene_TrackingState.cpp" />
     <ClCompile Include="Scene_VisibilityMask.cpp" />
   </ItemGroup>

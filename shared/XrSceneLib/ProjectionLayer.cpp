@@ -170,6 +170,9 @@ bool engine::ProjectionLayer::Render(Context& context,
                                      const std::vector<XrView>& views,
                                      const std::vector<std::unique_ptr<Scene>>& activeScenes,
                                      XrViewConfigurationType viewConfig) {
+    if (Test_Pause) {
+        return true; // submit previous frame.
+    }
 
     ViewConfigComponent& viewConfigComponent = m_viewConfigComponents.at(viewConfig);
     const sample::dx::SwapchainD3D11& colorSwapchain = viewConfigComponent.ColorSwapchain;
@@ -204,6 +207,17 @@ bool engine::ProjectionLayer::Render(Context& context,
             const float normalizedViewportMaxDepth = 1;
             const uint32_t colorImageArrayIndex = currentConfig.DoubleWideMode ? 0 : viewIndex;
             const uint32_t depthImageArrayIndex = currentConfig.DoubleWideMode ? 0 : viewIndex;
+            const_cast<XrFovf&>(fov).angleLeft *= currentConfig.Test_FovScale.angleLeft;
+            const_cast<XrFovf&>(fov).angleRight *= currentConfig.Test_FovScale.angleRight;
+            const_cast<XrFovf&>(fov).angleUp *= currentConfig.Test_FovScale.angleUp;
+            const_cast<XrFovf&>(fov).angleDown *= currentConfig.Test_FovScale.angleDown;
+            const_cast<XrPosef&>(viewPose) = xr::math::Pose::Multiply(projection.pose, currentConfig.Test_ViewPoseOffsets[viewIndex]);
+            const_cast<float&>(normalizedViewportMinDepth) = currentConfig.Test_MinDepth;
+            const_cast<float&>(normalizedViewportMaxDepth) = currentConfig.Test_MaxDepth;
+            const_cast<uint32_t&>(colorImageArrayIndex) =
+                currentConfig.DoubleWideMode ? 0 : currentConfig.Test_ColorImageArrayIndices[viewIndex];
+            const_cast<uint32_t&>(depthImageArrayIndex) =
+                currentConfig.DoubleWideMode ? 0 : currentConfig.Test_DepthImageArrayIndices[viewIndex];
 
             viewConfigComponent.LayerSpace = layerSpace;
             projectionViews[viewIndex] = {XR_TYPE_COMPOSITION_LAYER_PROJECTION_VIEW};

@@ -30,6 +30,12 @@ namespace engine {
         DirectX::XMFLOAT4 ClearColor = {0, 0, 0, 0}; // Transparent
         std::optional<XrCompositionLayerReprojectionInfoMSFT> ReprojectionConfig;
         std::optional<XrCompositionLayerReprojectionPlaneOverrideMSFT> ReprojectionPlaneOverride;
+        float Test_MinDepth = 0.0f;
+        float Test_MaxDepth = 1.0f;
+        XrFovf Test_FovScale = {1.0f, 1.0f, 1.0f, 1.0f}; // FovScale = (TargetFov / HmdFov)
+        XrPosef Test_ViewPoseOffsets[xr::StereoView::Count] = {{{0, 0, 0, 1}, {0, 0, 0}}, {{0, 0, 0, 1}, {0, 0, 0}}};
+        std::array<uint32_t, xr::StereoView::Count> Test_ColorImageArrayIndices = {xr::StereoView::Left, xr::StereoView::Right};
+        std::array<uint32_t, xr::StereoView::Count> Test_DepthImageArrayIndices = {xr::StereoView::Left, xr::StereoView::Right};
     };
 
     struct Scene;
@@ -69,6 +75,14 @@ namespace engine {
                     XrViewConfigurationType viewConfig);
 
         void DestroySwapchains();
+
+        void ForEachConfig(std::function<void(ProjectionLayerConfig& config)> callback) {
+            for (auto& configPair : m_viewConfigComponents) {
+                callback(configPair.second.PendingConfig);
+            }
+        }
+
+        bool Test_Pause = false;
 
     private:
         struct ViewConfigComponent {

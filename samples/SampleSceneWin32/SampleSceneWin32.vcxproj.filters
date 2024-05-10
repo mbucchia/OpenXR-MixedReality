@@ -10,12 +10,19 @@
     <ClCompile Include="..\EyeGazeInteractionUwp\Scene_EyeGazeInteraction.cpp" />
     <ClCompile Include="Scene_Animation.cpp" />
     <ClCompile Include="Scene_VisibilityMask.cpp" />
+    <ClCompile Include="Scene_FovModifier.cpp" />
+    <ClCompile Include="Scene_Menu.cpp" />
+    <ClCompile Include="Scene_Pause.cpp" />
+    <ClCompile Include="Scene_ProjectionConfig.cpp" />
+    <ClCompile Include="Scene_SwapchainFormat.cpp" />
+    <ClCompile Include="Scene_ProjectionQuality.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h">
       <Filter>Resources</Filter>
     </ClInclude>
+    <ClInclude Include="MenuContextScene.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Main.ico">

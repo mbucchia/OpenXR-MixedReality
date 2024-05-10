@@ -23,6 +23,11 @@ namespace engine {
 
         virtual ProjectionLayers& ProjectionLayers() = 0;
 
+        // Following are only used for test purposes
+        virtual void Test_ForceStop() = 0;
+        virtual void Test_Reset() = 0;
+        virtual void Test_RecreateProjectionSwapchains() = 0;
+        virtual void Test_ThrottleFrameLoop(int factor) = 0;
     };
 
     struct XrAppConfiguration {

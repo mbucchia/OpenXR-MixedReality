@@ -15,6 +15,16 @@ std::unique_ptr<engine::Scene> TryCreateHandTrackingScene(engine::Context& conte
 std::unique_ptr<engine::Scene> TryCreateTrackingStateScene(engine::Context& context);
 std::unique_ptr<engine::Scene> TryCreateQuadLayerScene(engine::Context& context);
 std::unique_ptr<engine::Scene> TryCreateEyeGazeInteractionScene(engine::Context& context);
+std::unique_ptr<engine::Scene> TryCreateProjectionConfigScene(engine::Context& context, engine::ProjectionLayers& projectionLayers);
+std::unique_ptr<engine::Scene> TryCreateProjectionScaleScene(engine::Context& context, engine::ProjectionLayers& projectionLayers);
+std::unique_ptr<engine::Scene> TryCreateProjectionSamplingScene(engine::Context& context, engine::ProjectionLayers& projectionLayers);
+std::unique_ptr<engine::Scene> TryCreateFovModifierScene(engine::Context& context, engine::ProjectionLayers& projectionLayers);
+std::unique_ptr<engine::Scene> TryCreateColorFormatScene(engine::Context& context, engine::ProjectionLayers& projectionLayers);
+std::unique_ptr<engine::Scene> TryCreateDepthFormatScene(engine::Context& context,
+                                                         engine::ProjectionLayers& projectionLayers,
+                                                         bool preferD16);
+std::unique_ptr<engine::Scene> TryCreatePauseScene(engine::Context& context, engine::ProjectionLayers& layers, engine::XrApp& app);
+std::unique_ptr<engine::Scene> TryCreateMenuScene(engine::Context& context, engine::XrApp& app);
 
 // Global Variables:
 std::thread sceneThread;
@@ -54,14 +64,34 @@ void EnterVR() {
         // appConfig.InteractionProfilesFilter.push_back("/interaction_profiles/khr/simple_controller");
 
         app = engine::CreateXrApp(appConfig);
-        app->AddScene(TryCreateTitleScene(app->Context()));
-        app->AddScene(TryCreateAnimationScene(app->Context()));
-        app->AddScene(TryCreateVisibilityMaskScene(app->Context()));
-        app->AddScene(TryCreateControllerActionsScene(app->Context()));
-        app->AddScene(TryCreateHandTrackingScene(app->Context()));
-        app->AddScene(TryCreateTrackingStateScene(app->Context()));
-        app->AddScene(TryCreateQuadLayerScene(app->Context()));
-        app->AddScene(TryCreateEyeGazeInteractionScene(app->Context()));
+
+        auto addScene = [&](bool defaultActive, std::unique_ptr<engine::Scene> scene) {
+            if (scene != nullptr) {
+                scene->SetActive(defaultActive);
+                app->AddScene(std::move(scene));
+            }
+        };
+
+        addScene(true, TryCreateColorFormatScene(app->Context(), app->ProjectionLayers()));
+        addScene(true, TryCreateDepthFormatScene(app->Context(), app->ProjectionLayers(), false));
+        addScene(true, TryCreateProjectionConfigScene(app->Context(), app->ProjectionLayers()));
+        addScene(true, TryCreateProjectionScaleScene(app->Context(), app->ProjectionLayers()));
+        addScene(true, TryCreateProjectionSamplingScene(app->Context(), app->ProjectionLayers()));
+        addScene(true, TryCreateFovModifierScene(app->Context(), app->ProjectionLayers()));
+
+        addScene(true, TryCreateAnimationScene(app->Context()));
+        addScene(true, TryCreateVisibilityMaskScene(app->Context()));
+        addScene(true, TryCreateControllerActionsScene(app->Context()));
+        addScene(true, TryCreateHandTrackingScene(app->Context()));
+        addScene(true, TryCreateTrackingStateScene(app->Context()));
+        addScene(false, TryCreateQuadLayerScene(app->Context()));
+        addScene(false, TryCreateEyeGazeInteractionScene(app->Context()));
+
+        addScene(true, TryCreateTitleScene(app->Context()));
+        addScene(false, TryCreatePauseScene(app->Context(), app->ProjectionLayers(), *app));
+
+        addScene(true, TryCreateMenuScene(app->Context(), *app));
+
         app->Run();
         app = nullptr;
     });

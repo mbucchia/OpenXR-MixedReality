@@ -63,10 +63,6 @@ namespace {
             XR_MSFT_UNBOUNDED_REFERENCE_SPACE_EXTENSION_NAME,
             XR_MSFT_SECONDARY_VIEW_CONFIGURATION_EXTENSION_NAME,
             XR_MSFT_FIRST_PERSON_OBSERVER_EXTENSION_NAME,
-#if UWP
-            XR_MSFT_HOLOGRAPHIC_WINDOW_ATTACHMENT_EXTENSION_NAME,
-            XR_EXT_WIN32_APPCONTAINER_COMPATIBLE_EXTENSION_NAME,
-#endif
         };
 
         std::vector<std::string> combinedExtensions = extensions;
@@ -99,6 +95,30 @@ namespace {
         }
 
     private:
+        void Test_ForceStop() override {
+            m_abortFrameLoop = true;
+        }
+
+        void Test_Reset() override {
+            {
+                std::scoped_lock lock(m_sceneMutex);
+                m_scenes.clear();
+            }
+
+            m_abortFrameLoop = false;
+            m_projectionLayers.Resize(1, Context(), true /*forceReset*/);
+        }
+
+        void Test_RecreateProjectionSwapchains() override {
+            m_projectionLayers.ForEachLayerWithLock(
+                [](auto&& layer) { layer.ForEachConfig([](auto&& config) { config.ForceReset = true; }); });
+        }
+
+        void Test_ThrottleFrameLoop(int factor) override {
+            m_frameLoopThrottleFactor = factor;
+        }
+
+        int m_frameLoopThrottleFactor{0};
 
         const engine::XrAppConfiguration m_appConfiguration;
 
@@ -490,6 +510,13 @@ namespace {
                 if (scene->IsActive()) {
                     scene->Update(m_currentFrameTime);
                 }
+            }
+        }
+
+        if (m_frameLoopThrottleFactor != 0) {
+            auto start = std::chrono::high_resolution_clock::now();
+            while (std::chrono::high_resolution_clock::now() - start < std::chrono::milliseconds(11 * m_frameLoopThrottleFactor)) {
+                std::this_thread::yield();
             }
         }
     }
