@@ -83,14 +83,16 @@
     <Link>
     </Link>
     <PreBuildEvent>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy $(ProjectDir)\damagedhelmet.glb $(OutDir)
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy $(ProjectDir)\Level.glb $(OutDir)
+copy $(ProjectDir)\damagedhelmet.glb $(OutDir)
 copy ..\..\..\OpenXR-Loader\bin\$(Platform)\openxr_loader.dll $(OutDir)</Command>
     </PreBuildEvent>
     <PreBuildEvent>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Copy assets...</Message>
     </PreBuildEvent>
     <PreBuildEvent>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy $(ProjectDir)\damagedhelmet.glb $(OutDir)
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy $(ProjectDir)\Level.glb $(OutDir)
+copy $(ProjectDir)\damagedhelmet.glb $(OutDir)
 copy ..\..\..\OpenXR-Loader\bin\$(Platform)\openxr_loader.dll $(OutDir)</Command>
     </PreBuildEvent>
     <PreBuildEvent>
@@ -119,14 +121,16 @@ copy ..\..\..\OpenXR-Loader\bin\$(Platform)\openxr_loader.dll $(OutDir)</Command
       <AdditionalLibraryDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\OpenXR-Loader\lib\$(Platform)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy $(ProjectDir)\damagedhelmet.glb $(OutDir)
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy $(ProjectDir)\Level.glb $(OutDir)
+copy $(ProjectDir)\damagedhelmet.glb $(OutDir)
 copy ..\..\..\OpenXR-Loader\bin\$(Platform)\openxr_loader.dll $(OutDir)</Command>
     </PreBuildEvent>
     <PreBuildEvent>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Copy assets...</Message>
     </PreBuildEvent>
     <PreBuildEvent>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy $(ProjectDir)\damagedhelmet.glb $(OutDir)
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy $(ProjectDir)\Level.glb $(OutDir)
+copy $(ProjectDir)\damagedhelmet.glb $(OutDir)
 copy ..\..\..\OpenXR-Loader\bin\$(Platform)\openxr_loader.dll $(OutDir)</Command>
     </PreBuildEvent>
     <PreBuildEvent>
@@ -153,6 +157,7 @@ copy ..\..\..\OpenXR-Loader\bin\$(Platform)\openxr_loader.dll $(OutDir)</Command
     <ClCompile Include="Scene_ProjectionConfig.cpp" />
     <ClCompile Include="Scene_ProjectionQuality.cpp" />
     <ClCompile Include="Scene_QuadLayers.cpp" />
+    <ClCompile Include="Scene_Stage.cpp" />
     <ClCompile Include="Scene_SwapchainFormat.cpp" />
     <ClCompile Include="Scene_TrackingState.cpp" />
     <ClCompile Include="Scene_VisibilityMask.cpp" />

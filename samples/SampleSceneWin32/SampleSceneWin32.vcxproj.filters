@@ -16,6 +16,7 @@
     <ClCompile Include="Scene_ProjectionConfig.cpp" />
     <ClCompile Include="Scene_SwapchainFormat.cpp" />
     <ClCompile Include="Scene_ProjectionQuality.cpp" />
+    <ClCompile Include="Scene_Stage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />

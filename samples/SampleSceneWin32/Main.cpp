@@ -8,6 +8,7 @@
 #include "Resource.h"
 
 std::unique_ptr<engine::Scene> TryCreateTitleScene(engine::Context& context);
+std::unique_ptr<engine::Scene> TryCreateStageScene(engine::Context& context);
 std::unique_ptr<engine::Scene> TryCreateAnimationScene(engine::Context& context);
 std::unique_ptr<engine::Scene> TryCreateVisibilityMaskScene(engine::Context& context);
 std::unique_ptr<engine::Scene> TryCreateControllerActionsScene(engine::Context& context);
@@ -79,18 +80,19 @@ void EnterVR() {
         addScene(true, TryCreateProjectionSamplingScene(app->Context(), app->ProjectionLayers()));
         addScene(true, TryCreateFovModifierScene(app->Context(), app->ProjectionLayers()));
 
+        addScene(true, TryCreateStageScene(app->Context()));
         addScene(true, TryCreateAnimationScene(app->Context()));
         addScene(true, TryCreateVisibilityMaskScene(app->Context()));
         addScene(true, TryCreateControllerActionsScene(app->Context()));
         addScene(true, TryCreateHandTrackingScene(app->Context()));
-        addScene(true, TryCreateTrackingStateScene(app->Context()));
-        addScene(false, TryCreateQuadLayerScene(app->Context()));
+        addScene(false, TryCreateTrackingStateScene(app->Context()));
+        addScene(true, TryCreateQuadLayerScene(app->Context()));
         addScene(false, TryCreateEyeGazeInteractionScene(app->Context()));
 
-        addScene(true, TryCreateTitleScene(app->Context()));
+        addScene(false, TryCreateTitleScene(app->Context()));
         addScene(false, TryCreatePauseScene(app->Context(), app->ProjectionLayers(), *app));
 
-        addScene(true, TryCreateMenuScene(app->Context(), *app));
+        addScene(false, TryCreateMenuScene(app->Context(), *app));
 
         app->Run();
         app = nullptr;
@@ -113,7 +115,7 @@ void ExitVR() {
 void ConfineCursor(HWND hwnd) {
     RECT rc;
     ::GetWindowRect(hwnd, &rc);
-    ::ClipCursor(&rc);
+    //::ClipCursor(&rc);
 }
 
 INT_PTR CALLBACK DialogWinProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
