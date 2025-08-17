@@ -55,10 +55,12 @@ void EnterVR() {
         appConfig.RequestedExtensions.push_back(XR_EXT_HAND_TRACKING_EXTENSION_NAME);
         appConfig.RequestedExtensions.push_back(XR_EXT_PALM_POSE_EXTENSION_NAME);
         appConfig.RequestedExtensions.push_back(XR_EXT_EYE_GAZE_INTERACTION_EXTENSION_NAME);
-        appConfig.RequestedExtensions.push_back(XR_HTCX_VIVE_TRACKER_INTERACTION_EXTENSION_NAME);
+        appConfig.RequestedExtensions.push_back(XR_EXT_HP_MIXED_REALITY_CONTROLLER_EXTENSION_NAME);
+        // appConfig.RequestedExtensions.push_back(XR_HTCX_VIVE_TRACKER_INTERACTION_EXTENSION_NAME);
 
         // NOTE: Uncomment a filter below to test specific action binding of given profile.
         // appConfig.InteractionProfilesFilter.push_back("/interaction_profiles/microsoft/motion_controller");
+        // appConfig.InteractionProfilesFilter.push_back("/interaction_profiles/hp/mixed_reality_controller");
         // appConfig.InteractionProfilesFilter.push_back("/interaction_profiles/oculus/touch_controller");
         // appConfig.InteractionProfilesFilter.push_back("/interaction_profiles/htc/vive_controller");
         // appConfig.InteractionProfilesFilter.push_back("/interaction_profiles/valve/index_controller");
@@ -86,7 +88,7 @@ void EnterVR() {
         addScene(true, TryCreateControllerActionsScene(app->Context()));
         addScene(true, TryCreateHandTrackingScene(app->Context()));
         addScene(false, TryCreateTrackingStateScene(app->Context()));
-        addScene(true, TryCreateQuadLayerScene(app->Context()));
+        // addScene(true, TryCreateQuadLayerScene(app->Context()));
         addScene(false, TryCreateEyeGazeInteractionScene(app->Context()));
 
         addScene(false, TryCreateTitleScene(app->Context()));

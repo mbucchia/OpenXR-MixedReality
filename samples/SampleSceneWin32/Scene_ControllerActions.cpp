@@ -35,6 +35,7 @@ namespace {
         static constexpr char const* SimpleController = "/interaction_profiles/khr/simple_controller";
         static constexpr char const* MotionController = "/interaction_profiles/microsoft/motion_controller";
         static constexpr char const* TouchController = "/interaction_profiles/oculus/touch_controller";
+        static constexpr char const* HPMixedRealityController = "/interaction_profiles/hp/mixed_reality_controller";
         static constexpr char const* ViveController = "/interaction_profiles/htc/vive_controller";
         static constexpr char const* IndexController = "/interaction_profiles/valve/index_controller";
         static constexpr char const* ViveTracker = "/interaction_profiles/htc/vive_tracker_htcx";
@@ -279,6 +280,7 @@ namespace {
                       {
                           {InteractionProfiles::MotionController, "trigger/value", nullptr},
                           {InteractionProfiles::TouchController, "trigger/value", nullptr},
+                          {InteractionProfiles::HPMixedRealityController, "trigger/value", nullptr},
                           {InteractionProfiles::ViveController, "trigger/value", nullptr},
                           {InteractionProfiles::IndexController, "trigger/value", nullptr},
                       });
@@ -288,6 +290,7 @@ namespace {
                       {
                           {InteractionProfiles::MotionController, "trigger/value", nullptr},
                           {InteractionProfiles::TouchController, "trigger/value", nullptr},
+                          {InteractionProfiles::HPMixedRealityController, "trigger/value", nullptr},
                           {InteractionProfiles::ViveController, "trigger/click", nullptr},
                           {InteractionProfiles::IndexController, "trigger/click", nullptr},
                           {InteractionProfiles::ViveTracker, "trigger/click", nullptr},
@@ -302,6 +305,7 @@ namespace {
                       XR_ACTION_TYPE_FLOAT_INPUT,
                       {
                           {InteractionProfiles::TouchController, "squeeze/value", nullptr},
+                          {InteractionProfiles::HPMixedRealityController, "squeeze/value", nullptr},
                           {InteractionProfiles::IndexController, "squeeze/value", nullptr},
                       });
             addAction("squeeze_click",
@@ -323,6 +327,7 @@ namespace {
                       {
                           {InteractionProfiles::MotionController, "thumbstick/x", nullptr},
                           {InteractionProfiles::TouchController, "thumbstick/x", nullptr},
+                          {InteractionProfiles::HPMixedRealityController, "thumbstick/x", nullptr},
                           {InteractionProfiles::IndexController, "thumbstick/x", nullptr},
                       });
             addAction("thumbstick_y",
@@ -330,6 +335,7 @@ namespace {
                       {
                           {InteractionProfiles::MotionController, "thumbstick/y", nullptr},
                           {InteractionProfiles::TouchController, "thumbstick/y", nullptr},
+                          {InteractionProfiles::HPMixedRealityController, "thumbstick/y", nullptr},
                           {InteractionProfiles::IndexController, "thumbstick/y", nullptr},
                       });
             addAction("thumbstick_click",
@@ -337,6 +343,7 @@ namespace {
                       {
                           {InteractionProfiles::MotionController, "thumbstick/click", nullptr},
                           {InteractionProfiles::TouchController, "thumbstick/click", nullptr},
+                          {InteractionProfiles::HPMixedRealityController, "thumbstick/click", nullptr},
                           {InteractionProfiles::IndexController, "thumbstick/click", nullptr},
                       });
             addAction("thumbstick_touch",
@@ -390,6 +397,7 @@ namespace {
                       XR_ACTION_TYPE_BOOLEAN_INPUT,
                       {
                           {InteractionProfiles::TouchController, "a/click", UserHandPath[xr::Side::Right]},
+                          {InteractionProfiles::HPMixedRealityController, "a/click", UserHandPath[xr::Side::Right]},
                           {InteractionProfiles::IndexController, "a/click", nullptr},
                       });
             addAction("a_touch",
@@ -402,6 +410,7 @@ namespace {
                       XR_ACTION_TYPE_BOOLEAN_INPUT,
                       {
                           {InteractionProfiles::TouchController, "b/click", UserHandPath[xr::Side::Right]},
+                          {InteractionProfiles::HPMixedRealityController, "b/click", UserHandPath[xr::Side::Right]},
                           {InteractionProfiles::IndexController, "b/click", nullptr},
                       });
             addAction("b_touch",
@@ -414,6 +423,7 @@ namespace {
                       XR_ACTION_TYPE_BOOLEAN_INPUT,
                       {
                           {InteractionProfiles::TouchController, "x/click", UserHandPath[xr::Side::Left]},
+                          {InteractionProfiles::HPMixedRealityController, "x/click", UserHandPath[xr::Side::Left]},
                       });
             addAction("x_touch",
                       XR_ACTION_TYPE_BOOLEAN_INPUT,
@@ -424,6 +434,7 @@ namespace {
                       XR_ACTION_TYPE_BOOLEAN_INPUT,
                       {
                           {InteractionProfiles::TouchController, "y/click", UserHandPath[xr::Side::Left]},
+                          {InteractionProfiles::HPMixedRealityController, "y/click", UserHandPath[xr::Side::Left]},
                       });
             addAction("y_touch",
                       XR_ACTION_TYPE_BOOLEAN_INPUT,
@@ -436,6 +447,7 @@ namespace {
                           {InteractionProfiles::SimpleController, "menu/click", nullptr},
                           {InteractionProfiles::MotionController, "menu/click", nullptr},
                           {InteractionProfiles::TouchController, "menu/click", UserHandPath[xr::Side::Left]},
+                          {InteractionProfiles::HPMixedRealityController, "menu/click", nullptr},
                           {InteractionProfiles::ViveController, "menu/click", nullptr},
                           {InteractionProfiles::ViveTracker, "menu/click", nullptr},
                       });
@@ -460,6 +472,7 @@ namespace {
                               {InteractionProfiles::SimpleController, "aim/pose", UserHandPath[side]},
                               {InteractionProfiles::MotionController, "aim/pose", UserHandPath[side]},
                               {InteractionProfiles::TouchController, "aim/pose", UserHandPath[side]},
+                              {InteractionProfiles::HPMixedRealityController, "aim/pose", UserHandPath[side]},
                               {InteractionProfiles::ViveController, "aim/pose", UserHandPath[side]},
                               {InteractionProfiles::IndexController, "aim/pose", UserHandPath[side]},
                           });
@@ -470,6 +483,7 @@ namespace {
                               {InteractionProfiles::SimpleController, "grip/pose", UserHandPath[side]},
                               {InteractionProfiles::MotionController, "grip/pose", UserHandPath[side]},
                               {InteractionProfiles::TouchController, "grip/pose", UserHandPath[side]},
+                              {InteractionProfiles::HPMixedRealityController, "grip/pose", UserHandPath[side]},
                               {InteractionProfiles::ViveController, "grip/pose", UserHandPath[side]},
                               {InteractionProfiles::IndexController, "grip/pose", UserHandPath[side]},
                           });
@@ -481,6 +495,7 @@ namespace {
                                   {InteractionProfiles::SimpleController, "palm_ext/pose", UserHandPath[side]},
                                   {InteractionProfiles::MotionController, "palm_ext/pose", UserHandPath[side]},
                                   {InteractionProfiles::TouchController, "palm_ext/pose", UserHandPath[side]},
+                                  {InteractionProfiles::HPMixedRealityController, "palm_ext/pose", UserHandPath[side]},
                                   {InteractionProfiles::ViveController, "palm_ext/pose", UserHandPath[side]},
                                   {InteractionProfiles::IndexController, "palm_ext/pose", UserHandPath[side]},
                               });
@@ -541,6 +556,8 @@ namespace {
                                                                 suggestedBindings[InteractionProfiles::MotionController]);
                 actionContext.SuggestInteractionProfileBindings(InteractionProfiles::TouchController,
                                                                 suggestedBindings[InteractionProfiles::TouchController]);
+                actionContext.SuggestInteractionProfileBindings(InteractionProfiles::HPMixedRealityController,
+                                                                suggestedBindings[InteractionProfiles::HPMixedRealityController]);
                 actionContext.SuggestInteractionProfileBindings(InteractionProfiles::ViveController,
                                                                 suggestedBindings[InteractionProfiles::ViveController]);
                 actionContext.SuggestInteractionProfileBindings(InteractionProfiles::IndexController,
