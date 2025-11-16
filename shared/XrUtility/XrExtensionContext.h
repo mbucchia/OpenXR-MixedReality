@@ -9,6 +9,7 @@ namespace xr {
     struct ExtensionContext {
         bool SupportsD3D11{false};
         bool SupportsD3D12{false};
+        bool SupportsHeadless{false};
         bool SupportsDepthInfo{false};
         bool SupportsVisibilityMask{false};
         bool SupportsHandInteraction{false};
@@ -50,6 +51,7 @@ namespace xr {
 #ifdef XR_USE_GRAPHICS_API_D3D12
         extensions.SupportsD3D12 = extensions.IsEnabled(XR_KHR_D3D12_ENABLE_EXTENSION_NAME);
 #endif
+        extensions.SupportsHeadless = extensions.IsEnabled(XR_MND_HEADLESS_EXTENSION_NAME);
 #ifdef XR_USE_PLATFORM_WIN32
         extensions.SupportsAppContainer = extensions.IsEnabled(XR_EXT_WIN32_APPCONTAINER_COMPATIBLE_EXTENSION_NAME);
 #endif
@@ -66,4 +68,3 @@ namespace xr {
         return extensions;
     }
 } // namespace xr
-
