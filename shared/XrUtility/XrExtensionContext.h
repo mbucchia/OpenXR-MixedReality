@@ -55,7 +55,7 @@ namespace xr {
 #endif
         extensions.SupportsDepthInfo = extensions.IsEnabled(XR_KHR_COMPOSITION_LAYER_DEPTH_EXTENSION_NAME);
         extensions.SupportsVisibilityMask = extensions.IsEnabled(XR_KHR_VISIBILITY_MASK_EXTENSION_NAME);
-        extensions.SupportsHandInteraction = extensions.IsEnabled(XR_MSFT_HAND_INTERACTION_EXTENSION_NAME);
+        extensions.SupportsHandInteraction = extensions.IsEnabled(XR_EXT_HAND_INTERACTION_EXTENSION_NAME);
         extensions.SupportsEyeGazeInteraction = extensions.IsEnabled(XR_EXT_EYE_GAZE_INTERACTION_EXTENSION_NAME);
         extensions.SupportsSecondaryViewConfiguration = extensions.IsEnabled(XR_MSFT_SECONDARY_VIEW_CONFIGURATION_EXTENSION_NAME);
         extensions.SupportsHandJointTracking = extensions.IsEnabled(XR_EXT_HAND_TRACKING_EXTENSION_NAME);
