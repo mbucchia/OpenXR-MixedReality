@@ -44,6 +44,7 @@ namespace xr::detail {
         throw std::runtime_error("Unexpected vsnprintf failure");
     }
 
+#ifndef NO_THROW_HANDLER
     [[noreturn]] inline void _Throw(std::string failureMessage, const char* originator = nullptr, const char* sourceLocation = nullptr) {
         if (originator != nullptr) {
             failureMessage += _Fmt("\n    Origin: %s", originator);
@@ -54,6 +55,9 @@ namespace xr::detail {
 
         throw std::logic_error(failureMessage);
     }
+#else
+    [[noreturn]] void _Throw(std::string failureMessage, const char* originator = nullptr, const char* sourceLocation = nullptr);
+#endif
 
 #define THROW(msg) xr::detail::_Throw(msg, nullptr, FILE_AND_LINE)
 #define CHECK(exp)                                                   \
